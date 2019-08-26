@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">BM&amp;C - Compliance Inspection Helper</string>
+    <!-- Strings related to login -->
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="action_sign_in_short">Login</string>
+    <string name="error_invalid_login">This username is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+
+    <!-- Strings related to compliance inspection -->
+    <string name="title_activity_compliance_inspection">Compliance Inspection</string>
+    <string name="date_hint">Date</string>
+    <string name="prompt_finding">Findings</string>
+    <string name="prompt_comment">Comments</string>
+    <string name="prompt_status">Select Open or Closed</string>
+</resources>
