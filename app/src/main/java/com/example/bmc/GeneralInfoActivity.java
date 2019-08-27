@@ -1,5 +1,6 @@
 package com.example.bmc;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -27,24 +28,27 @@ public class GeneralInfoActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        building = (Building) getIntent().getSerializableExtra( "MyBuilding" );
-        populate( building );
-        listView = findViewById( R.id.lv_general_info );
-        listView.setAdapter( new ArrayAdapter<>( this, android.R.layout.simple_list_item_1, buildingInfo ) );
+        building = (Building) getIntent().getSerializableExtra("MyBuilding");
+        populate(building);
+        listView = findViewById(R.id.lv_general_info);
+        listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, buildingInfo));
+
+        FloatingActionButton floatingActionButton = findViewById( R.id.fab );
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent( getApplicationContext(), ComplianceInspectionActivity.class );
+                intent.putExtra( "MyBuilding", building );
+                startActivity( intent );
+            }
+        });
     }
 
-    private void populate( Building building ) {
-        Log.i( "Name", building.getName() );
-        buildingInfo.add( building.getName() );
-
-        Log.i( "Address", building.getAddress() );
-        buildingInfo.add( building.getAddress() );
-
-        Log.i( "Location", building.getLocation() );
-        buildingInfo.add( building.getLocation() );
-
-        Log.i( "Year", String.valueOf(building.getYearBuilt()));
-        buildingInfo.add( String.valueOf( building.getYearBuilt() ) );
+    private void populate(Building building) {
+        buildingInfo.add(building.getName());
+        buildingInfo.add(building.getAddress());
+        buildingInfo.add(building.getLocation());
+        buildingInfo.add(String.valueOf(building.getYearBuilt()));
     }
 
 }
