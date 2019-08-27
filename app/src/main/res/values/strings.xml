@@ -16,4 +16,6 @@
     <string name="prompt_finding">Findings</string>
     <string name="prompt_comment">Comments</string>
     <string name="prompt_status">Select Open or Closed</string>
+    <string name="title_activity_dashboard">Dashboard</string>
+    <string name="title_activity_general_info">General Building Info</string>
 </resources>
