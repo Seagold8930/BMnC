@@ -3,10 +3,8 @@ package com.example.bmc;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -83,7 +81,7 @@ public class GeneralInfoActivity extends AppCompatActivity {
     }
 
     private void openDashboard() {
-        startActivity( new Intent( getApplicationContext(), Dashboard.class ) );
+        startActivity( new Intent( getApplicationContext(), DashboardActivity.class ) );
     }
 
     @Override

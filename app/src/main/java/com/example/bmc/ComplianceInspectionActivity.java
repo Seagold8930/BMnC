@@ -96,7 +96,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     }
 
     private void openDashboard() {
-        startActivity( new Intent( getApplicationContext(), Dashboard.class ) );
+        startActivity( new Intent( getApplicationContext(), DashboardActivity.class ) );
     }
 
     @Override

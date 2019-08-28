@@ -22,4 +22,11 @@
     <!-- Strings related to menu items -->
     <string name="dashboard">Dashboard</string>
     <string name="logout">Logout</string>
+
+    <!-- Strings related to change password -->
+    <string name="title_activity_change_password">Change Password</string>
+    <string name="prompt_new_password">Enter new password</string>
+    <string name="prompt_confirm_password">Confirm password</string>
+    <string name="action_change_password">Change Password</string>
+
 </resources>

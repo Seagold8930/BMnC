@@ -18,7 +18,7 @@ import com.example.bmc.dummy.DummyBuilding;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Dashboard extends AppCompatActivity {
+public class DashboardActivity extends AppCompatActivity {
     private List<Building> buildings = DummyBuilding.getDummyData();
     private List<String> buildingNames = new ArrayList<>();
     private ListView listView;
