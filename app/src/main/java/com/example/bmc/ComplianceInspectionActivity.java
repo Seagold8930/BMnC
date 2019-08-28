@@ -1,8 +1,14 @@
 package com.example.bmc;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -15,8 +21,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import java.io.File;
 
 public class ComplianceInspectionActivity extends AppCompatActivity {
+    private static File file;
+    private static int counter = 0;
+    private static String imageName;
     private ImageView imageView;
     private static Bitmap bitmap;
 
@@ -28,19 +38,21 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
 
-        EditText date = findViewById( R.id.date );
-        EditText finding = findViewById( R.id.finding );
-        EditText description = findViewById( R.id.description );
+        EditText date = findViewById(R.id.date);
+        EditText finding = findViewById(R.id.finding);
+        EditText description = findViewById(R.id.description);
 
         View focusView = finding;
         focusView.requestFocus();
 
-        imageView = findViewById( R.id.compliance_image );
+        imageView = findViewById(R.id.compliance_image);
 
-        if( savedInstanceState == null )
+        if (savedInstanceState == null) {
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
             takePicture();
-        else
-            imageView.setImageBitmap( bitmap );
+        } else
+            imageView.setImageBitmap(bitmap);
 
         FloatingActionButton fab = findViewById(R.id.submit_button);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -53,35 +65,64 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     }
 
     private void takePicture() {
-        startActivityForResult( new Intent( MediaStore.ACTION_IMAGE_CAPTURE ), 0);
+        Intent photo = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        String filepath = "file:///sdcard/";
+        imageName = "photo" + counter++ + ".jpg";
+        Uri uri = Uri.parse(filepath + imageName);
+        photo.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
+        startActivityForResult(photo, 0);
+//        startActivityForResult( new Intent( MediaStore.ACTION_IMAGE_CAPTURE ), 0);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        try {
-            bitmap = (Bitmap) data.getExtras().get( "data" );
-            imageView.setImageBitmap( bitmap );
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (resultCode == RESULT_OK) {
+            try {
+                file = new File(Environment.getExternalStorageDirectory().getPath(), imageName);
+                Uri uri = Uri.fromFile(file);
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                ExifInterface exif = new ExifInterface(uri.getPath());
+                int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                Matrix matrix = new Matrix();
+
+                if (orientation == 6) {
+                    matrix.postRotate(90);
+                } else if (orientation == 3) {
+                    matrix.postRotate(180);
+                } else if (orientation == 8) {
+                    matrix.postRotate(270);
+                }
+
+                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                imageView.setImageBitmap(bitmap);
+
+                if( getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
+                    imageView.setRotation(90);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                finish();
+            }
+        } else {
             finish();
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu( Menu menu ) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate( R.menu.menu, menu );
-        return super.onCreateOptionsMenu( menu );
+        inflater.inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected( MenuItem item ) {
-        switch( item.getItemId() ) {
-            case R.id.action_logout :
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
                 logout();
                 return true;
-            case R.id.action_dashboard :
+            case R.id.action_dashboard:
                 openDashboard();
                 return true;
         }
@@ -90,17 +131,17 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     }
 
     private void logout() {
-        Intent intent = new Intent( getApplicationContext(), LoginActivity.class );
-        intent.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-        startActivity( intent );
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     private void openDashboard() {
-        startActivity( new Intent( getApplicationContext(), DashboardActivity.class ) );
+        startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
