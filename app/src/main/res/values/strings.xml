@@ -18,4 +18,8 @@
     <string name="prompt_status">Select Open or Closed</string>
     <string name="title_activity_dashboard">Dashboard</string>
     <string name="title_activity_general_info">General Building Info</string>
+
+    <!-- Strings related to menu items -->
+    <string name="dashboard">Dashboard</string>
+    <string name="logout">Logout</string>
 </resources>

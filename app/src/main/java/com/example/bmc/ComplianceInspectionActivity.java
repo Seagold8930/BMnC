@@ -9,7 +9,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 public class ComplianceInspectionActivity extends AppCompatActivity {
@@ -21,7 +25,15 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compliance_inspection);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
+
+        EditText date = findViewById( R.id.date );
+        EditText finding = findViewById( R.id.finding );
+        EditText comments = findViewById( R.id.comment );
+
+        View focusView = finding;
+        focusView.requestFocus();
 
         imageView = findViewById( R.id.compliance_image );
 
@@ -54,6 +66,42 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
             e.printStackTrace();
             finish();
         }
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu ) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate( R.menu.menu, menu );
+        return super.onCreateOptionsMenu( menu );
+    }
+
+    @Override
+    public boolean onOptionsItemSelected( MenuItem item ) {
+        switch( item.getItemId() ) {
+            case R.id.action_logout :
+                logout();
+                return true;
+            case R.id.action_dashboard :
+                openDashboard();
+                return true;
+        }
+
+        return false;
+    }
+
+    private void logout() {
+        Intent intent = new Intent( getApplicationContext(), LoginActivity.class );
+        intent.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+        startActivity( intent );
+    }
+
+    private void openDashboard() {
+        startActivity( new Intent( getApplicationContext(), Dashboard.class ) );
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
     }
 }

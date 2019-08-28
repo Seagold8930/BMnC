@@ -7,6 +7,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -26,6 +29,7 @@ public class GeneralInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_general_info);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
 
         building = (Building) getIntent().getSerializableExtra("MyBuilding");
@@ -51,4 +55,40 @@ public class GeneralInfoActivity extends AppCompatActivity {
         buildingInfo.add(String.valueOf(building.getYearBuilt()));
     }
 
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu ) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate( R.menu.menu, menu );
+        return super.onCreateOptionsMenu( menu );
+    }
+
+    @Override
+    public boolean onOptionsItemSelected( MenuItem item ) {
+        switch( item.getItemId() ) {
+            case R.id.action_logout :
+                logout();
+                return true;
+            case R.id.action_dashboard :
+                openDashboard();
+                return true;
+        }
+
+        return false;
+    }
+
+    private void logout() {
+        Intent intent = new Intent( getApplicationContext(), LoginActivity.class );
+        intent.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+        startActivity( intent );
+    }
+
+    private void openDashboard() {
+        startActivity( new Intent( getApplicationContext(), Dashboard.class ) );
+    }
+
+    @Override
+    public boolean onSupportNavigateUp(){
+        finish();
+        return true;
+    }
 }
