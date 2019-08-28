@@ -30,7 +30,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
 
         EditText date = findViewById( R.id.date );
         EditText finding = findViewById( R.id.finding );
-        EditText comments = findViewById( R.id.comment );
+        EditText description = findViewById( R.id.description );
 
         View focusView = finding;
         focusView.requestFocus();

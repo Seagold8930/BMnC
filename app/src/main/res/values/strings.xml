@@ -13,8 +13,8 @@
     <!-- Strings related to compliance inspection -->
     <string name="title_activity_compliance_inspection">Compliance Inspection</string>
     <string name="date_hint">Date</string>
-    <string name="prompt_finding">Findings</string>
-    <string name="prompt_comment">Comments</string>
+    <string name="prompt_finding">Finding</string>
+    <string name="prompt_comment">Description</string>
     <string name="prompt_status">Select Open or Closed</string>
     <string name="title_activity_dashboard">Dashboard</string>
     <string name="title_activity_general_info">General Building Info</string>

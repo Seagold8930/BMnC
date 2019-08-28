@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity( new Intent( getApplicationContext(), ChangePasswordActivity.class ) );
+                startActivity( new Intent( getApplicationContext(), DashboardActivity.class ) );
                 //attemptLogin();
             }
         });
