@@ -9,18 +9,18 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.bmc.dummy.Building;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class GeneralInfoActivity extends AppCompatActivity {
     private Building building;
-    private List<String> buildingInfo = new ArrayList<>();
+    private LinkedHashMap<String,String> buildingInfo = new LinkedHashMap<>();
     ListView listView;
+    FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +33,23 @@ public class GeneralInfoActivity extends AppCompatActivity {
         building = (Building) getIntent().getSerializableExtra("MyBuilding");
         populate(building);
         listView = findViewById(R.id.lv_general_info);
-        listView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, buildingInfo));
+        show( buildingInfo );
+        myFAB();
+    }
 
-        FloatingActionButton floatingActionButton = findViewById( R.id.fab );
+    private void populate(Building building) {
+        buildingInfo.put( "Building Name", building.getName() );
+        buildingInfo.put( "Address", building.getAddress() );
+        buildingInfo.put( "Location", building.getLocation() );
+        buildingInfo.put( "Year Built", String.valueOf( building.getYearBuilt() ) );
+    }
+
+    private void show( HashMap<String, String> buildingInfo ) {
+        listView.setAdapter( new GeneralInfoAdapter( buildingInfo ) );
+    }
+
+    private void myFAB() {
+        floatingActionButton = findViewById( R.id.fab );
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,13 +58,6 @@ public class GeneralInfoActivity extends AppCompatActivity {
                 startActivity( intent );
             }
         });
-    }
-
-    private void populate(Building building) {
-        buildingInfo.add(building.getName());
-        buildingInfo.add(building.getAddress());
-        buildingInfo.add(building.getLocation());
-        buildingInfo.add(String.valueOf(building.getYearBuilt()));
     }
 
     @Override

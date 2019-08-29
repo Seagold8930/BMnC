@@ -28,5 +28,6 @@
     <string name="prompt_new_password">Enter new password</string>
     <string name="prompt_confirm_password">Confirm password</string>
     <string name="action_change_password">Change Password</string>
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>
