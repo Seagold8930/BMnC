@@ -94,8 +94,8 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         Spinner spinner = findViewById( R.id.status );
         populateList();
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>( getApplicationContext(), android.R.layout.simple_spinner_item, spinnerList );
-        arrayAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>( getApplication(), R.layout.spinner_item, spinnerList );
+        arrayAdapter.setDropDownViewResource( R.layout.spinner_dropdown_item );
         spinner.setAdapter( arrayAdapter );
     }
 
@@ -139,8 +139,8 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
                 bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
                 imageView.setImageBitmap(bitmap);
 
-                if( getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
-                    imageView.setRotation(90);
+//                if( getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
+//                    imageView.setRotation(90);
 
             } catch (Exception e) {
                 e.printStackTrace();
