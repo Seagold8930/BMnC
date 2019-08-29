@@ -19,11 +19,24 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static java.text.DateFormat.getDateInstance;
 
 public class ComplianceInspectionActivity extends AppCompatActivity {
+    EditText date;
+    EditText finding;
+    EditText description;
+    private List<String> spinnerList;
     private static File file;
     private static int counter = 0;
     private static String imageName;
@@ -38,12 +51,8 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         setSupportActionBar(toolbar);
 
-        EditText date = findViewById(R.id.date);
-        EditText finding = findViewById(R.id.finding);
-        EditText description = findViewById(R.id.description);
-
-        View focusView = finding;
-        focusView.requestFocus();
+        myEditTexts();
+        mySpinner();
 
         imageView = findViewById(R.id.compliance_image);
 
@@ -62,6 +71,39 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    private void myEditTexts() {
+        date = findViewById(R.id.date);
+        finding = findViewById(R.id.finding);
+        description = findViewById(R.id.description);
+
+        date.setText( getSystemDate() );
+
+        View focusView = finding;
+        focusView.requestFocus();
+    }
+
+    private String getSystemDate() {
+        Date sysDate = new Date();
+        SimpleDateFormat format = (SimpleDateFormat) getDateInstance();
+        return format.format( sysDate );
+    }
+
+    private void mySpinner() {
+        Spinner spinner = findViewById( R.id.status );
+        populateList();
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>( getApplicationContext(), android.R.layout.simple_spinner_item, spinnerList );
+        arrayAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item );
+        spinner.setAdapter( arrayAdapter );
+    }
+
+    private void populateList() {
+        spinnerList = new ArrayList<>();
+        spinnerList.add( "Select Status (Open/Closed)" );
+        spinnerList.add( "Open" );
+        spinnerList.add( "Closed" );
     }
 
     private void takePicture() {
