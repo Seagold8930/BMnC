@@ -9,8 +9,11 @@ public class Validate {
             return 3;
         else if ( input.length() < 3 )
             return 2;
-        else if ( ! input.matches( "^(?=.*/d)(?=.*[A-Z])(?!.*[a-zA-Z0-9.])(.{3,})$" ) )
+        else if ( ! input.matches( "[a-zA-Z]+[.][a-zA-Z]+[0-9]+" ) )
             return 1;
+        else if ( input.matches( "[a-zA-Z]+[.][a-zA-Z]+[0-9]+" ) )
+            return 0;
+
         return -1;
     }
 
