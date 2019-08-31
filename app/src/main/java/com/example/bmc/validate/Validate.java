@@ -3,6 +3,8 @@ package com.example.bmc.validate;
 public class Validate {
 
     public int validateUsername(String input) {
+        if( input.isEmpty() )
+            return 4;
         return -1;
     }
 
