@@ -5,6 +5,8 @@ public class Validate {
     public int validateUsername(String input) {
         if( input.isEmpty() )
             return 4;
+        else if( input.contains( " " ) )
+            return 3;
         return -1;
     }
 
