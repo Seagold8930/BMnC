@@ -20,6 +20,10 @@ public class Validate {
     public int validatePassword(String input) {
         if ( input.isEmpty() )
             return 4;
+        else if ( input.contains( " " ) )
+            return 3;
+        else if ( input.length() < 8 )
+            return 2;
 
         return -1;
     }
