@@ -14,7 +14,7 @@ public class InvalidPasswordTest {
     @Before
     public void setUp() {
         validate = new Validate();
-        myInput = "D///.Mota///001";
+        myInput = "long-enough-but-wrong-pattern";
     }
 
     @After
