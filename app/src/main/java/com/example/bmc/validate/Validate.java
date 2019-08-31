@@ -18,6 +18,9 @@ public class Validate {
     }
 
     public int validatePassword(String input) {
+        if ( input.isEmpty() )
+            return 4;
+
         return -1;
     }
 }
