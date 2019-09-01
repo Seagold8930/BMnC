@@ -31,6 +31,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.bmc.validate.Validate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,8 @@ import java.util.List;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
     public static final int PERMISSION_REQUEST_CODE = 100;
+    private boolean cancel;
+    private View focusView;
     /**
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
@@ -83,8 +87,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
-                //attemptLogin();
+//                startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
+                attemptLogin();
             }
         });
 
@@ -128,24 +132,44 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String username = mUsernameView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
+        cancel = false;
+        focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
+        Validate validate = new Validate();
+        int userErrorCode = validate.validateUsername( username );
+        int passErrorCode = validate.validatePassword( password );
+
+        if( userErrorCode == 4 ) {
+            mUsernameView.setError( getString(R.string.error_field_required) );
+            focusView = mUsernameView;
+            cancel = true;
+        } else if ( userErrorCode == 3 ) {
+            mUsernameView.setError( getString( R.string.error_white_space ) );
+            focusView = mUsernameView;
+            cancel = true;
+        } else if ( userErrorCode == 2 ) {
+            mUsernameView.setError( getString( R.string.error_invalid_length ) );
+            focusView = mUsernameView;
+            cancel = true;
+        } else if ( userErrorCode == 1 ) {
+            mUsernameView.setError( getString( R.string.error_invalid_login ) );
+            focusView = mUsernameView;
+            cancel = true;
+        } else if ( passErrorCode == 4 ) {
+            mPasswordView.setError( getString( R.string.error_field_required ) );
             focusView = mPasswordView;
             cancel = true;
-        }
-
-        // Check for a valid username.
-        if (TextUtils.isEmpty(username)) {
-            mUsernameView.setError(getString(R.string.error_field_required));
-            focusView = mUsernameView;
+        } else if ( passErrorCode == 3 ) {
+            mPasswordView.setError( getString( R.string.error_white_space ) );
+            focusView = mPasswordView;
             cancel = true;
-        } else if (!isUsernameValid(username)) {
-            mUsernameView.setError(getString(R.string.error_invalid_login));
-            focusView = mUsernameView;
+        } else if ( passErrorCode == 2 ) {
+            mPasswordView.setError( getString( R.string.error_invalid_length ) );
+            focusView = mPasswordView;
+            cancel = true;
+        } else if ( passErrorCode == 1 ) {
+            mPasswordView.setError( getString( R.string.error_incorrect_password ) );
+            focusView = mPasswordView;
             cancel = true;
         }
 
@@ -153,12 +177,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(username, password);
-            mAuthTask.execute((Void) null);
+//        } else {
+//            // Show a progress spinner, and kick off a background task to
+//            // perform the user login attempt.
+//            showProgress(true);
+//            mAuthTask = new UserLoginTask(username, password);
+//            mAuthTask.execute((Void) null);
         }
     }
 

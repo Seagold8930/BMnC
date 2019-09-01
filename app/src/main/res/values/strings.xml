@@ -6,9 +6,10 @@
     <string name="action_sign_in">Login</string>
     <string name="action_sign_in_short">Login</string>
     <string name="error_invalid_login">This username is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_invalid_length">This field is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="error_white_space">Whitespace detected</string>
 
     <!-- Strings related to compliance inspection -->
     <string name="title_activity_compliance_inspection">Compliance Inspection</string>
