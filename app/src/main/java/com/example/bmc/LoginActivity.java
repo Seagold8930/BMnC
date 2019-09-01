@@ -41,8 +41,6 @@ import java.util.List;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
     public static final int PERMISSION_REQUEST_CODE = 100;
-    private boolean cancel;
-    private View focusView;
     /**
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
@@ -132,8 +130,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String username = mUsernameView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        cancel = false;
-        focusView = null;
+        boolean cancel = false;
+        View focusView = null;
 
         Validate validate = new Validate();
         int userErrorCode = validate.validateUsername( username );
@@ -172,6 +170,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView = mPasswordView;
             cancel = true;
         } else if ( userErrorCode == -1 || passErrorCode == -1 ) {
+            focusView = mUsernameView;
             Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ), Toast.LENGTH_SHORT ).show();
             cancel = true;
         }
@@ -179,7 +178,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
-            focusView = mUsernameView;
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
@@ -334,7 +332,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if (success) {
                 if( mUsername.equals( mPassword ) ) {
-                    startActivity( new Intent( getApplicationContext(), ChangePasswordActivity.class ));
+                    Intent intent = new Intent( getApplicationContext(), ChangePasswordActivity.class );
+                    intent.putExtra( "Default Password", mPassword );
+                    startActivity( intent );
                 } else {
                     startActivity( new Intent( getApplicationContext(), DashboardActivity.class ) );
                 }
