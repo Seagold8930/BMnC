@@ -30,6 +30,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.bmc.validate.Validate;
 
@@ -171,11 +172,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mPasswordView.setError( getString( R.string.error_incorrect_password ) );
             focusView = mPasswordView;
             cancel = true;
+        } else if ( userErrorCode == -1 || passErrorCode == -1 ) {
+            Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ), Toast.LENGTH_SHORT ).show();
+            cancel = true;
         }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
+            focusView = mUsernameView;
             focusView.requestFocus();
 //        } else {
 //            // Show a progress spinner, and kick off a background task to

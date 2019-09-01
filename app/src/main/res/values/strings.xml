@@ -10,6 +10,7 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_white_space">Whitespace detected</string>
+    <string name="unexpected_error">Unexpected error</string>
 
     <!-- Strings related to compliance inspection -->
     <string name="title_activity_compliance_inspection">Compliance Inspection</string>
