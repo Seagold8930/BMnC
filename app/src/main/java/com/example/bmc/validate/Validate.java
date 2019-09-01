@@ -26,6 +26,8 @@ public class Validate {
             return 2;
         else if ( ! input.matches( "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$" ) )
             return 1;
+        else if ( input.matches( "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$" ) )
+            return 0;
 
         return -1;
     }
