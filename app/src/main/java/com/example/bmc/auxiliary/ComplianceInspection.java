@@ -1,16 +1,23 @@
 package com.example.bmc.auxiliary;
 
-import java.io.File;
-
 public class ComplianceInspection {
     private int buildingID;
     private String date;
     private String finding;
     private String description;
     private String status;
-    private File image;
+    private ComplianceImage image;
 
-    public ComplianceInspection(int buildingID, String date, String finding, String description, String status, File image) {
+    public ComplianceInspection( ComplianceImage image ) {
+        this.buildingID = 0;
+        this.date = null;
+        this.finding = null;
+        this.description = null;
+        this.status = null;
+        this.image = image;
+    }
+
+    public ComplianceInspection(int buildingID, String date, String finding, String description, String status, ComplianceImage image) {
         this.buildingID = buildingID;
         this.date = date;
         this.finding = finding;
@@ -59,11 +66,25 @@ public class ComplianceInspection {
         this.status = status;
     }
 
-    public File getImage() {
+    public ComplianceImage getImage() {
         return image;
     }
 
-    public void setImage(File image) {
+    public void setImage(ComplianceImage image) {
         this.image = image;
+    }
+
+    public boolean addComplianceInspectionData( int buildingID, String date, String finding, String description, String status ) {
+        try {
+            setBuildingID( buildingID );
+            setDate( date );
+            setFinding( finding );
+            setDescription( description );
+            setStatus( status );
+            return true;
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
