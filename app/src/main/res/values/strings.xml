@@ -6,6 +6,7 @@
     <string name="action_sign_in">Login</string>
     <string name="action_sign_in_short">Login</string>
     <string name="error_invalid_login">This username is invalid</string>
+    <string name="error_pattern_mismatch">Invalid pattern</string>
     <string name="error_invalid_length">This field is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>

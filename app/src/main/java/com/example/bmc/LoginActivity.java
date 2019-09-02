@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * TODO: remove after connecting to a real authentication system.
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "Dan.Mota001:Dan.Mota001", "admin:admin"
+            "dan.mota001:Dan.Mota001", "admin:admin"
     };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -137,41 +137,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         int userErrorCode = validate.validateUsername( username );
         int passErrorCode = validate.validatePassword( password );
 
-        if( userErrorCode == 4 ) {
-            mUsernameView.setError( getString(R.string.error_field_required) );
-            focusView = mUsernameView;
-            cancel = true;
-        } else if ( userErrorCode == 3 ) {
-            mUsernameView.setError( getString( R.string.error_white_space ) );
-            focusView = mUsernameView;
-            cancel = true;
-        } else if ( userErrorCode == 2 ) {
-            mUsernameView.setError( getString( R.string.error_invalid_length ) );
-            focusView = mUsernameView;
-            cancel = true;
-        } else if ( userErrorCode == 1 ) {
-            mUsernameView.setError( getString( R.string.error_invalid_login ) );
-            focusView = mUsernameView;
-            cancel = true;
-        } else if ( passErrorCode == 4 ) {
-            mPasswordView.setError( getString( R.string.error_field_required ) );
-            focusView = mPasswordView;
-            cancel = true;
-        } else if ( passErrorCode == 3 ) {
-            mPasswordView.setError( getString( R.string.error_white_space ) );
-            focusView = mPasswordView;
-            cancel = true;
-        } else if ( passErrorCode == 2 ) {
-            mPasswordView.setError( getString( R.string.error_invalid_length ) );
-            focusView = mPasswordView;
-            cancel = true;
-        } else if ( passErrorCode == 1 ) {
-            mPasswordView.setError( getString( R.string.error_incorrect_password ) );
-            focusView = mPasswordView;
-            cancel = true;
-        } else if ( userErrorCode == -1 || passErrorCode == -1 ) {
+        if ( userErrorCode == -1 || passErrorCode == -1 ) {
             focusView = mUsernameView;
             Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ), Toast.LENGTH_SHORT ).show();
+            cancel = true;
+        } else if ( userErrorCode != 0 ) {
+            mUsernameView.setError( getErrorMessage( userErrorCode ) );
+            focusView = mUsernameView;
+            cancel = true;
+        } else if ( passErrorCode != 0 ) {
+            mPasswordView.setError( getErrorMessage( passErrorCode ) );
+            focusView = mPasswordView;
             cancel = true;
         }
 
@@ -186,6 +162,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = new UserLoginTask(username, password);
             mAuthTask.execute((Void) null);
         }
+    }
+
+    private CharSequence getErrorMessage(int errorCode) {
+        switch ( errorCode ) {
+            case 4 :
+                return getString(R.string.error_field_required);
+            case 3 :
+                return getString( R.string.error_white_space );
+            case 2 :
+                return getString( R.string.error_invalid_length );
+            case 1 :
+                return getString( R.string.error_pattern_mismatch );
+            default:
+                Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ), Toast.LENGTH_SHORT ).show();
+                break;
+        }
+
+        return null;
     }
 
     private boolean isUsernameValid(String username) {
@@ -331,7 +325,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
-                if( mUsername.equals( mPassword ) ) {
+                if( mUsername.toLowerCase().equals( mPassword.toLowerCase() ) ) {
                     Intent intent = new Intent( getApplicationContext(), ChangePasswordActivity.class );
                     intent.putExtra( "Default Password", mPassword );
                     startActivity( intent );
