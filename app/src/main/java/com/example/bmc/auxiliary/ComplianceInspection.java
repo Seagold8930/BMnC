@@ -8,7 +8,16 @@ public class ComplianceInspection {
     private String status;
     private ComplianceImage image;
 
-    public ComplianceInspection( ComplianceImage image ) {
+    public ComplianceInspection() {
+        this.buildingID = 0;
+        this.date = null;
+        this.finding = null;
+        this.description = null;
+        this.status = null;
+        this.image = null;
+    }
+
+    public ComplianceInspection(ComplianceImage image ) {
         this.buildingID = 0;
         this.date = null;
         this.finding = null;
