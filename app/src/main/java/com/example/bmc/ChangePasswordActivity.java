@@ -45,43 +45,56 @@ public class ChangePasswordActivity extends AppCompatActivity {
             int newPassErrorCode = validate.validatePassword( newPass );
             int confirmPassErrorCode = validate.validatePassword( confirmPass );
 
-            if ( newPassErrorCode == 4 ) {
-                mNewPass.setError( getString( R.string.error_field_required ) );
-                focusView = mNewPass;
-                cancel = true;
-            } else if ( newPassErrorCode == 3 ) {
-                mNewPass.setError( getString( R.string.error_white_space ) );
-                focusView = mNewPass;
-                cancel = true;
-            } else if ( newPassErrorCode == 2 ) {
-                mNewPass.setError( getString( R.string.error_invalid_length ) );
-                focusView = mNewPass;
-                cancel = true;
-            } else if ( newPassErrorCode == 1 ) {
-                mNewPass.setError( getString( R.string.error_invalid_password ) );
-                focusView = mNewPass;
-                cancel = true;
-            } else if ( confirmPassErrorCode == 4 ) {
-                mConfirmPass.setError( getString( R.string.error_field_required ) );
-                focusView = mConfirmPass;
-                cancel = true;
-            } else if ( confirmPassErrorCode == 3 ) {
-                mConfirmPass.setError( getString( R.string.error_white_space ) );
-                focusView = mConfirmPass;
-                cancel = true;
-            } else if ( confirmPassErrorCode == 2 ) {
-                mConfirmPass.setError( getString( R.string.error_invalid_length ) );
-                focusView = mConfirmPass;
-                cancel = true;
-            } else if ( confirmPassErrorCode == 1 ) {
-                mConfirmPass.setError( getString( R.string.error_invalid_password ) );
-                focusView = mConfirmPass;
-                cancel = true;
-            } else if ( newPassErrorCode == -1 || confirmPassErrorCode == -1 ) {
+            if( newPassErrorCode == -1 || confirmPassErrorCode == -1 ) {
                 focusView = mNewPass;
                 Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ), Toast.LENGTH_SHORT ).show();
                 cancel = true;
+            } else if ( newPassErrorCode != 0 ) {
+                mNewPass.setError( getErrorCode( newPassErrorCode ) );
+                focusView = mNewPass;
+                cancel = true;
+            } else if ( confirmPassErrorCode != 0 ) {
+                mConfirmPass.setError( getErrorCode( confirmPassErrorCode ) );
+                focusView = mConfirmPass;
+                cancel = true;
             }
+//            if ( newPassErrorCode == 4 ) {
+//                mNewPass.setError( getString( R.string.error_field_required ) );
+//                focusView = mNewPass;
+//                cancel = true;
+//            } else if ( newPassErrorCode == 3 ) {
+//                mNewPass.setError( getString( R.string.error_white_space ) );
+//                focusView = mNewPass;
+//                cancel = true;
+//            } else if ( newPassErrorCode == 2 ) {
+//                mNewPass.setError( getString( R.string.error_invalid_length ) );
+//                focusView = mNewPass;
+//                cancel = true;
+//            } else if ( newPassErrorCode == 1 ) {
+//                mNewPass.setError( getString( R.string.error_invalid_password ) );
+//                focusView = mNewPass;
+//                cancel = true;
+//            } else if ( confirmPassErrorCode == 4 ) {
+//                mConfirmPass.setError( getString( R.string.error_field_required ) );
+//                focusView = mConfirmPass;
+//                cancel = true;
+//            } else if ( confirmPassErrorCode == 3 ) {
+//                mConfirmPass.setError( getString( R.string.error_white_space ) );
+//                focusView = mConfirmPass;
+//                cancel = true;
+//            } else if ( confirmPassErrorCode == 2 ) {
+//                mConfirmPass.setError( getString( R.string.error_invalid_length ) );
+//                focusView = mConfirmPass;
+//                cancel = true;
+//            } else if ( confirmPassErrorCode == 1 ) {
+//                mConfirmPass.setError( getString( R.string.error_invalid_password ) );
+//                focusView = mConfirmPass;
+//                cancel = true;
+//            } else if ( newPassErrorCode == -1 || confirmPassErrorCode == -1 ) {
+//                focusView = mNewPass;
+//                Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ), Toast.LENGTH_SHORT ).show();
+//                cancel = true;
+//            }
 
             if ( cancel ) {
                 focusView.requestFocus();
@@ -95,6 +108,23 @@ public class ChangePasswordActivity extends AppCompatActivity {
             focusView = mConfirmPass;
             focusView.requestFocus();
         }
+    }
+
+    private CharSequence getErrorCode(int errorCode) {
+        switch (errorCode) {
+            case 4 :
+                return getString( R.string.error_field_required );
+            case 3 :
+                return getString( R.string.error_white_space );
+            case 2 :
+                return getString( R.string.error_invalid_length );
+            case 1 :
+                return getString( R.string.error_invalid_password );
+            default:
+                Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ), Toast.LENGTH_SHORT ).show();
+                break;
+        }
+        return null;
     }
 
     @Override
