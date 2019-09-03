@@ -9,12 +9,12 @@ import org.junit.Test;
 
 public class InvalidPasswordTest {
     private Validate validate;
-    private String myInput;
+    private String[] myInput = { "d///.mota///001", "johndoe001", "johnndoe", "john.doe",
+            "johndoe.001", "!#SK.DOE0", "!#SK.DOE", "JOHN_DOE001", "john-doe001", "123456789" };
 
     @Before
     public void setUp() {
         validate = new Validate();
-        myInput = "long-enough-but-wrong-pattern";
     }
 
     @After
@@ -25,7 +25,9 @@ public class InvalidPasswordTest {
 
     @Test
     public void input_validator_invalid_input() {
-        Assert.assertEquals( 1, validate.validatePassword( myInput ) );
+        for ( String s : myInput ) {
+            Assert.assertEquals( 1, validate.validatePassword( s ) );
+        }
     }
 
 }

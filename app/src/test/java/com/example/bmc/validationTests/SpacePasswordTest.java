@@ -9,12 +9,14 @@ import org.junit.Test;
 
 public class SpacePasswordTest {
     private Validate validate;
-    private String myInput;
+    private String[] myInput = { "D .Mota 001", " John.Doe001", "John .Doe001", "John. Doe001",
+            "John.Doe001 ", " J o h n . D o e 0 0 1 ", "My Password 100", " 1 23 456 7",
+            "Pass word pass ", "AJLhdaU9 8q3HDi!&(^" };
+
 
     @Before
     public void setUp() {
         validate = new Validate();
-        myInput = "D .Mota 001";
     }
 
     @After
@@ -25,6 +27,8 @@ public class SpacePasswordTest {
 
     @Test
     public void input_validator_space_input() {
-        Assert.assertEquals( 3, validate.validatePassword( myInput ) );
+        for ( String s : myInput ) {
+            Assert.assertEquals( 3, validate.validatePassword( s ) );
+        }
     }
 }

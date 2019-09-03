@@ -9,12 +9,11 @@ import org.junit.Test;
 
 public class ShortUsernameTest {
     private Validate validate;
-    private String myInput;
+    private String[] myInput = { "D", "123", "AbC", "def", "GHI", ".", "._", "0" };
 
     @Before
     public void setUp() {
         validate = new Validate();
-        myInput = "D";
     }
 
     @After
@@ -25,6 +24,8 @@ public class ShortUsernameTest {
 
     @Test
     public void input_validator_short_input() {
-        Assert.assertEquals( 2, validate.validateUsername( myInput ) );
+        for ( String s : myInput ) {
+            Assert.assertEquals( 2, validate.validateUsername( s ) );
+        }
     }
 }

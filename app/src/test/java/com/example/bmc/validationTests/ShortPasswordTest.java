@@ -9,12 +9,11 @@ import org.junit.Test;
 
 public class ShortPasswordTest {
     private Validate validate;
-    private String myInput;
+    private String[] myInput = { "D", "short", "123456", "AbCDeF", "!$Whsa0", "_.-=", "5#$97", "0" };
 
     @Before
     public void setUp() {
         validate = new Validate();
-        myInput = "short";
     }
 
     @After
@@ -25,6 +24,8 @@ public class ShortPasswordTest {
 
     @Test
     public void input_validator_short_input() {
-        Assert.assertEquals( 2, validate.validatePassword( myInput ) );
+        for ( String s : myInput ) {
+            Assert.assertEquals( 2, validate.validatePassword( s ) );
+        }
     }
 }

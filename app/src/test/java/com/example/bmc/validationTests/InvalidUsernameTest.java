@@ -9,12 +9,13 @@ import org.junit.Test;
 
 public class InvalidUsernameTest {
     private Validate validate;
-    private String myInput;
+    private String[] myInput = { "D///.Mota///001", "JohnDoe001", "JohnDoe", "John.Doe",
+            "JohnDoe.001", "!#Sk.Doe0", "!#Sk.Doe", "John_Doe001", "john-doe001", "123456789" };
+
 
     @Before
     public void setUp() {
         validate = new Validate();
-        myInput = "D///.Mota///001";
     }
 
     @After
@@ -25,6 +26,8 @@ public class InvalidUsernameTest {
 
     @Test
     public void input_validator_invalid_input() {
-        Assert.assertEquals( 1, validate.validateUsername( myInput ) );
+        for ( String s : myInput ) {
+            Assert.assertEquals( 1, validate.validateUsername( s ) );
+        }
     }
 }

@@ -7,7 +7,7 @@ public class Validate {
             return 4;
         else if( input.contains( " " ) )
             return 3;
-        else if ( input.length() < 3 )
+        else if ( input.length() < 8 )
             return 2;
         else if ( ! input.matches( "[a-zA-Z]+[.][a-zA-Z]+[0-9]+" ) )
             return 1;
