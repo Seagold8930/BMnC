@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class InvalidUsernameTest {
     private Validate validate;
-    private String[] myInput = { "D///.Mota///001", "JohnDoe001", "JohnDoe", "John.Doe",
+    private String[] myInput = { "D///.Mota///001", "JohnDoe001", "JohhnDoe", "John.Doe",
             "JohnDoe.001", "!#Sk.Doe0", "!#Sk.Doe", "John_Doe001", "john-doe001", "123456789" };
 
 

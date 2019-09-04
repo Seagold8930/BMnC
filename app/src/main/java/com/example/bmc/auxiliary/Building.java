@@ -1,13 +1,13 @@
 package com.example.bmc.auxiliary;
 
 public class Building {
-    private int buildingID;
+    private String buildingID;
     private String buildingName;
     private String buildingAddress;
     private String buildingLocation;
     private int buildingYearBuilt;
 
-    public Building(int buildingID, String buildingName, String buildingAddress, String buildingLocation, int buildingYearBuilt) {
+    public Building(String buildingID, String buildingName, String buildingAddress, String buildingLocation, int buildingYearBuilt) {
         this.buildingID = buildingID;
         this.buildingName = buildingName;
         this.buildingAddress = buildingAddress;
@@ -15,11 +15,11 @@ public class Building {
         this.buildingYearBuilt = buildingYearBuilt;
     }
 
-    public int getBuildingID() {
+    public String getBuildingID() {
         return buildingID;
     }
 
-    public void setBuildingID(int buildingID) {
+    public void setBuildingID(String buildingID) {
         this.buildingID = buildingID;
     }
 
