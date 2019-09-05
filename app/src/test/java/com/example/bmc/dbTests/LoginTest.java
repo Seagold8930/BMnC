@@ -15,7 +15,7 @@ public class LoginTest {
     @Before
     public void setUp() {
         handler = new DB_Handler();
-        userCredentials = new UserCredentials( "D.Mota001", "D.Mota001" );
+        userCredentials = new UserCredentials( "John.Doe001", "John.Doe001" );
     }
 
     @After
@@ -26,6 +26,6 @@ public class LoginTest {
 
     @Test
     public void login_test() {
-        Assert.assertTrue( handler.login( userCredentials.getUsername(), userCredentials.getPassword() ) );
+        Assert.assertNotNull( handler.login( userCredentials.getUsername(), userCredentials.getPassword() ) );
     }
 }

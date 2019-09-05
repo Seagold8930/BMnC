@@ -15,7 +15,7 @@ public class GetBuildingTest {
     @Before
     public void setUp() {
         handler = new DB_Handler();
-        user = new User( "Dan", "D.Mota001" );
+        user = new User( "John Doe", "John.Doe001" );
     }
 
     @After

@@ -38,9 +38,10 @@ public class DB_Handler {
 
     }
 
-    public boolean login(String username, String password ) {
+    public User login(String username, String password ) {
         String db_user = null;
         String db_pass = null;
+        String db_name_surname = null;
 
         try {
             statement = conn.prepareStatement( "SELECT * FROM [dbo].[User] WHERE userID = ?" );
@@ -50,11 +51,12 @@ public class DB_Handler {
             while ( set.next() ) {
                 db_user = set.getString( "userID" );
                 db_pass = set.getString( "password" );
+                db_name_surname = set.getString( "name" );
             }
 
             if ( db_user != null && db_pass != null ) {
                 if ( db_user.equalsIgnoreCase( username ) && db_pass.equals( password ) ) {
-                    //TODO return true
+                    //TODO instantiate and return User object
                 }
             }
 
@@ -69,7 +71,7 @@ public class DB_Handler {
                 e.printStackTrace();
             }
         }
-        return false;
+        return null;
     }
 
     public boolean updatePassword( String newPassword, User user ) {
