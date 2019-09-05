@@ -1,23 +1,28 @@
 package com.example.bmc.db;
 
 import com.example.bmc.auxiliary.Building;
+import com.example.bmc.auxiliary.ComplianceImage;
 import com.example.bmc.auxiliary.ComplianceInspection;
 import com.example.bmc.auxiliary.User;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.Blob;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import com.microsoft.sqlserver.jdbc.SQLServerDriver;
 
 public class DB_Handler {
     private Connection conn = null;
     private PreparedStatement statement;
     private ResultSet set;
+    private List<Building> buildings = new ArrayList<>();
 
     public DB_Handler() {
 
@@ -49,7 +54,7 @@ public class DB_Handler {
 
             if ( db_user != null && db_pass != null ) {
                 if ( db_user.equalsIgnoreCase( username ) && db_pass.equals( password ) ) {
-                    //TO DO Return true
+                    //TODO return true
                 }
             }
 
@@ -71,9 +76,10 @@ public class DB_Handler {
 
         try {
             conn.setAutoCommit( false );
-            statement = conn.prepareStatement( "UPDATE [dbo].[User] SET password = ? WHERE userID = ?" );
+            statement = conn.prepareStatement( "UPDATE [dbo].[User] SET password = ? WHERE " +
+                    "lower( userID ) = ?" );
             statement.setString( 1, newPassword );
-            statement.setString( 2, user.getUsername() );
+            statement.setString( 2, user.getUsername().toLowerCase() );
 
             statement.execute();
             conn.commit();
@@ -89,8 +95,8 @@ public class DB_Handler {
         } finally {
             try {
                 statement.close();
-                conn.close();
                 conn.setAutoCommit( true );
+                conn.close();
             } catch ( SQLException e ) {
                 e.printStackTrace();
             }
@@ -101,11 +107,11 @@ public class DB_Handler {
 
     public List<Building> getBuildingName(User user) {
         List<String> buildingIDs = new ArrayList<>();
-        List<Building> buildings = new ArrayList<>();
 
         try {
-            statement = conn.prepareStatement( "SELECT * FROM [dbo].[User_Building] WHERE userID = ?" );
-            statement.setString( 1, user.getUsername() );
+            statement = conn.prepareStatement( "SELECT * FROM [dbo].[User_Building] WHERE " +
+                    "lower( userID ) = ?" );
+            statement.setString( 1, user.getUsername().toLowerCase() );
 
             set = statement.executeQuery();
 
@@ -117,13 +123,17 @@ public class DB_Handler {
             set = null;
 
             for ( String id : buildingIDs ) {
-                statement = conn.prepareStatement( "SELECT * FROM [dbo].[Building_Header] WHERE buildingID = ?" );
+                statement = conn.prepareStatement( "SELECT * FROM [dbo].[Building_Header] " +
+                        "WHERE buildingID = ?" );
                 statement.setString( 1, id );
                 set = statement.executeQuery();
 
                 while ( set.next() ) {
-                    buildings.add( new Building( set.getString( "buildingID" ), set.getString( "buildingName" ),
-                            set.getString( "address" ), set.getString( "location" ), set.getInt( "yearBuilt" ) ) );
+                    addBuildingToList( new Building( set.getString( "buildingID" ),
+                            set.getString( "buildingName" ),
+                            set.getString( "address" ),
+                            set.getString( "location" ),
+                            set.getInt( "yearBuilt" ) ) );
                 }
 
                 statement = null;
@@ -144,9 +154,71 @@ public class DB_Handler {
         return null;
     }
 
-    public boolean uploadComplianceInspection(ComplianceInspection complianceInspection) {
-        //TODO implement db logic
+    private void addBuildingToList(Building building) {
+        buildings.add( building );
+    }
+
+    public boolean uploadComplianceInspection( ComplianceInspection complianceInspection, User user ) {
+        Date date = new java.sql.Date( new java.util.Date().getTime() );
+
+        try {
+            conn.setAutoCommit( false );
+            statement = conn.prepareStatement( "INSERT INTO [dbo].[Compliance_Inspection] " +
+                    "( buildingID, inspectionDate, finding, description, inspectionStatus, image," +
+                    " createdBy, creationDate ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )" );
+            statement.setString( 1, complianceInspection.getBuildingID() );
+            statement.setDate( 2, date );
+            statement.setString( 3, complianceInspection.getFinding() );
+            statement.setString( 4, complianceInspection.getDescription() );
+            statement.setString( 5, complianceInspection.getStatus() );
+            //TODO fix exception com.microsoft.sqlserver.jdbc.SQLServerException: String or binary data would be truncated.
+            statement.setBytes( 6, getBlob( complianceInspection.getImage().getImageFile() ) );
+            statement.setString( 7, user.getUsername() );
+            statement.setDate( 8, date );
+
+            statement.execute();
+            conn.commit();
+            //TODO return true
+        } catch ( SQLException e ) {
+            e.printStackTrace();
+            try {
+                conn.rollback();
+            } catch ( SQLException e1 ) {
+                e1.printStackTrace();
+            }
+        } finally {
+            try {
+                statement.close();
+                conn.setAutoCommit( true );
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         return false;
+    }
+
+    private byte[] getBlob( File imageFile ) {
+        byte[] fileContent = new byte[ ( int ) imageFile.length() ];
+        FileInputStream inputStream = null;
+
+        try {
+            inputStream = new FileInputStream( imageFile );
+            inputStream.read(fileContent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return fileContent;
     }
 
     public static void main( String[] args ) {

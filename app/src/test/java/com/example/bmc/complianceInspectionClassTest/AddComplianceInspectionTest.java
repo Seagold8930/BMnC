@@ -12,7 +12,7 @@ import java.util.List;
 
 public class AddComplianceInspectionTest {
     private ComplianceInspection complianceInspection;
-    private int buildingID;
+    private String buildingID;
     private String date;
     private String finding;
     private String description;
@@ -21,7 +21,7 @@ public class AddComplianceInspectionTest {
     @Before
     public void setUp() {
         complianceInspection = new ComplianceInspection();
-        buildingID = 1;
+        buildingID = "bld001";
         date = "30 Aug, 2019";
         finding = "some finding";
         description = "some description";
@@ -31,7 +31,7 @@ public class AddComplianceInspectionTest {
     @After
     public void tearDown() {
         complianceInspection = null;
-        buildingID = 0;
+        buildingID = null;
         date = null;
         finding = null;
         description = null;

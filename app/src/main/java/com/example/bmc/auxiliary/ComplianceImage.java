@@ -2,7 +2,7 @@ package com.example.bmc.auxiliary;
 
 import java.io.File;
 
-class ComplianceImage {
+public class ComplianceImage {
     private File imageFile;
 
     public ComplianceImage(File imageFile) {

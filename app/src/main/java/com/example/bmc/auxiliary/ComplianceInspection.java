@@ -1,7 +1,7 @@
 package com.example.bmc.auxiliary;
 
 public class ComplianceInspection {
-    private int buildingID;
+    private String buildingID;
     private String date;
     private String finding;
     private String description;
@@ -9,7 +9,7 @@ public class ComplianceInspection {
     private ComplianceImage image;
 
     public ComplianceInspection() {
-        this.buildingID = 0;
+        this.buildingID = null;
         this.date = null;
         this.finding = null;
         this.description = null;
@@ -18,7 +18,7 @@ public class ComplianceInspection {
     }
 
     public ComplianceInspection(ComplianceImage image ) {
-        this.buildingID = 0;
+        this.buildingID = null;
         this.date = null;
         this.finding = null;
         this.description = null;
@@ -26,7 +26,7 @@ public class ComplianceInspection {
         this.image = image;
     }
 
-    public ComplianceInspection(int buildingID, String date, String finding, String description, String status, ComplianceImage image) {
+    public ComplianceInspection(String buildingID, String date, String finding, String description, String status, ComplianceImage image) {
         this.buildingID = buildingID;
         this.date = date;
         this.finding = finding;
@@ -35,11 +35,11 @@ public class ComplianceInspection {
         this.image = image;
     }
 
-    public int getBuildingID() {
+    public String getBuildingID() {
         return buildingID;
     }
 
-    public void setBuildingID(int buildingID) {
+    public void setBuildingID(String buildingID) {
         this.buildingID = buildingID;
     }
 
@@ -83,7 +83,7 @@ public class ComplianceInspection {
         this.image = image;
     }
 
-    public boolean addComplianceInspectionData( int buildingID, String date, String finding, String description, String status ) {
+    public boolean addComplianceInspectionData( String buildingID, String date, String finding, String description, String status ) {
         try {
             setBuildingID( buildingID );
             setDate( date );
