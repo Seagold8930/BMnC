@@ -1,14 +1,12 @@
 package com.example.bmc.db;
 
 import com.example.bmc.auxiliary.Building;
-import com.example.bmc.auxiliary.ComplianceImage;
 import com.example.bmc.auxiliary.ComplianceInspection;
 import com.example.bmc.auxiliary.User;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -28,7 +26,7 @@ public class DB_Handler {
 
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            String connectionString = "jdbc:sqlserver://bmcs.database.windows.net:1433;database=Building Management and Compliance;user=bmcs_admin;password=Weltec2019;encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+            String connectionString = "jdbc:sqlserver://bmcs.database.windows.net:1433;database=BM&C;user=bmcs_admin;password=Weltec2019;encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
             String username = "bmcs_admin";
             String password = "Weltec2019";
             conn = DriverManager.getConnection( connectionString );
@@ -173,8 +171,7 @@ public class DB_Handler {
             statement.setString( 3, complianceInspection.getFinding() );
             statement.setString( 4, complianceInspection.getDescription() );
             statement.setString( 5, complianceInspection.getStatus() );
-            //TODO fix exception com.microsoft.sqlserver.jdbc.SQLServerException: String or binary data would be truncated.
-            statement.setBytes( 6, getBlob( complianceInspection.getImage().getImageFile() ) );
+            statement.setBinaryStream( 6, getBinaryStreamFromFile( complianceInspection.getImage().getImageFile() ) );
             statement.setString( 7, user.getUsername() );
             statement.setDate( 8, date );
 
@@ -201,7 +198,7 @@ public class DB_Handler {
         return false;
     }
 
-    private byte[] getBlob( File imageFile ) {
+    private FileInputStream getBinaryStreamFromFile(File imageFile ) {
         byte[] fileContent = new byte[ ( int ) imageFile.length() ];
         FileInputStream inputStream = null;
 
@@ -220,12 +217,12 @@ public class DB_Handler {
             }
         }
 
-        return fileContent;
+        return inputStream;
     }
 
     public static void main( String[] args ) {
         DB_Handler handler = new DB_Handler();
-        User user = new User( "Dan", "Dan.Mota001" );
+        User user = new User( "John Doe", "John.Doe001" );
         handler.getBuildingName( user );
     }
 }
