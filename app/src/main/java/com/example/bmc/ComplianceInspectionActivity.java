@@ -1,7 +1,6 @@
 package com.example.bmc;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
@@ -37,11 +36,10 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     EditText finding;
     EditText description;
     private List<String> spinnerList;
-    private static File file;
-    private static int counter = 0;
-    private static String imageName;
+    private File file;
+    private String imageName;
     private ImageView imageView;
-    private static Bitmap bitmap;
+    private Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,11 +107,10 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     private void takePicture() {
         Intent photo = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         String filepath = "file:///sdcard/";
-        imageName = "photo" + counter++ + ".jpg";
+        imageName = String.format( "%s%s%s", "BM&C_", new SimpleDateFormat("ddMMyyhhmmss").format( new Date() ), ".jpg" );
         Uri uri = Uri.parse(filepath + imageName);
         photo.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(photo, 0);
-//        startActivityForResult( new Intent( MediaStore.ACTION_IMAGE_CAPTURE ), 0);
     }
 
     @Override
@@ -121,7 +118,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             try {
-                file = new File(Environment.getExternalStorageDirectory().getPath(), imageName);
+                file = new File( Environment.getExternalStorageDirectory().getPath(), imageName );
                 Uri uri = Uri.fromFile(file);
                 bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
                 ExifInterface exif = new ExifInterface(uri.getPath());
@@ -138,9 +135,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
 
                 bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
                 imageView.setImageBitmap(bitmap);
-
-//                if( getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT )
-//                    imageView.setRotation(90);
+                MediaStore.Images.Media.insertImage( getContentResolver(), bitmap, imageName, null );
 
             } catch (Exception e) {
                 e.printStackTrace();
