@@ -18,46 +18,50 @@ import java.util.LinkedHashMap;
 
 public class GeneralInfoActivity extends AppCompatActivity {
     private Building building;
-    private LinkedHashMap<String,String> buildingInfo = new LinkedHashMap<>();
+    private LinkedHashMap< String,String > buildingInfo = new LinkedHashMap<>();
     ListView listView;
     FloatingActionButton floatingActionButton;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_general_info);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        setSupportActionBar(toolbar);
+    protected void onCreate( Bundle savedInstanceState ) {
+        super.onCreate( savedInstanceState );
+        createActivity();
+    }
 
-        building = (Building) getIntent().getSerializableExtra("MyBuilding");
-        populate(building);
-        listView = findViewById(R.id.lv_general_info);
+    private void createActivity() {
+        setContentView( R.layout.activity_general_info );
+        Toolbar toolbar = findViewById( R.id.toolbar );
+        toolbar.setNavigationIcon( R.drawable.ic_arrow_back_white_24dp );
+        setSupportActionBar( toolbar );
+
+        building = ( Building ) getIntent().getSerializableExtra( "MyBuilding" );
+        populate( building );
+        listView = findViewById( R.id.lv_general_info );
         show( buildingInfo );
         myFAB();
     }
 
-    private void populate(Building building) {
+    private void populate( Building building ) {
         buildingInfo.put( "Building Name", building.getName() );
         buildingInfo.put( "Address", building.getAddress() );
         buildingInfo.put( "Location", building.getLocation() );
         buildingInfo.put( "Year Built", String.valueOf( building.getYearBuilt() ) );
     }
 
-    private void show( HashMap<String, String> buildingInfo ) {
+    private void show( HashMap< String, String > buildingInfo ) {
         listView.setAdapter( new GeneralInfoAdapter( buildingInfo ) );
     }
 
     private void myFAB() {
         floatingActionButton = findViewById( R.id.fab );
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        floatingActionButton.setOnClickListener( new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick( View v ) {
                 Intent intent = new Intent( getApplicationContext(), ComplianceInspectionActivity.class );
                 intent.putExtra( "MyBuilding", building );
                 startActivity( intent );
             }
-        });
+        } );
     }
 
     @Override

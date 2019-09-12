@@ -7,7 +7,7 @@ public class Building {
     private String buildingLocation;
     private int buildingYearBuilt;
 
-    public Building(String buildingID, String buildingName, String buildingAddress, String buildingLocation, int buildingYearBuilt) {
+    public Building( String buildingID, String buildingName, String buildingAddress, String buildingLocation, int buildingYearBuilt ) {
         this.buildingID = buildingID;
         this.buildingName = buildingName;
         this.buildingAddress = buildingAddress;
@@ -19,7 +19,7 @@ public class Building {
         return buildingID;
     }
 
-    public void setBuildingID(String buildingID) {
+    public void setBuildingID( String buildingID ) {
         this.buildingID = buildingID;
     }
 
@@ -27,7 +27,7 @@ public class Building {
         return buildingName;
     }
 
-    public void setBuildingName(String buildingName) {
+    public void setBuildingName( String buildingName ) {
         this.buildingName = buildingName;
     }
 
@@ -35,7 +35,7 @@ public class Building {
         return buildingAddress;
     }
 
-    public void setBuildingAddress(String buildingAddress) {
+    public void setBuildingAddress( String buildingAddress ) {
         this.buildingAddress = buildingAddress;
     }
 
@@ -43,7 +43,7 @@ public class Building {
         return buildingLocation;
     }
 
-    public void setBuildingLocation(String buildingLocation) {
+    public void setBuildingLocation( String buildingLocation ) {
         this.buildingLocation = buildingLocation;
     }
 
@@ -51,7 +51,7 @@ public class Building {
         return buildingYearBuilt;
     }
 
-    public void setBuildingYearBuilt(int buildingYearBuilt) {
+    public void setBuildingYearBuilt( int buildingYearBuilt ) {
         this.buildingYearBuilt = buildingYearBuilt;
     }
 }

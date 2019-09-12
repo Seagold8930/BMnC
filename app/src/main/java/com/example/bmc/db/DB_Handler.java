@@ -1,5 +1,7 @@
 package com.example.bmc.db;
 
+import android.net.Uri;
+
 import com.example.bmc.auxiliary.Building;
 import com.example.bmc.auxiliary.ComplianceInspection;
 import com.example.bmc.auxiliary.User;
@@ -25,24 +27,25 @@ public class DB_Handler {
     public DB_Handler() {
 
         try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            String connectionString = "jdbc:sqlserver://bmcs.database.windows.net:1433;database=BM&C;user=bmcs_admin;password=Weltec2019;encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+//            Class.forName( "com.microsoft.sqlserver.jdbc.SQLServerDriver" );
+            Class.forName( "net.sourceforge.jtds.jdbc.Driver" );
+            String connectionString = "jdbc:jtds:sqlserver://bmcs.database.windows.net:1433/BM&C;encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;";
             String username = "bmcs_admin";
             String password = "Weltec2019";
-            conn = DriverManager.getConnection( connectionString );
+            conn = DriverManager.getConnection( connectionString, username, password );
         } catch ( Exception e ) {
             e.printStackTrace();
         }
 
     }
 
-    public User login(String username, String password ) {
+    public User login( String username, String password ) {
         String db_user = null;
         String db_pass = null;
         String db_name_surname = null;
 
         try {
-            statement = conn.prepareStatement( "SELECT * FROM [dbo].[User] WHERE userID = ?" );
+            statement = conn.prepareStatement( "SELECT * FROM [User] WHERE [userID] = ?" );
             statement.setString( 1, username );
             set = statement.executeQuery();
 
@@ -54,7 +57,7 @@ public class DB_Handler {
 
             if ( db_user != null && db_pass != null ) {
                 if ( db_user.equalsIgnoreCase( username ) && db_pass.equals( password ) ) {
-                    //TODO instantiate and return User object
+                    return new User( db_name_surname, db_user );
                 }
             }
 
@@ -76,15 +79,15 @@ public class DB_Handler {
 
         try {
             conn.setAutoCommit( false );
-            statement = conn.prepareStatement( "UPDATE [dbo].[User] SET password = ? WHERE " +
-                    "lower( userID ) = ?" );
+            statement = conn.prepareStatement( "UPDATE [User] SET [password] = ? WHERE " +
+                    "lower( [userID] ) = ?" );
             statement.setString( 1, newPassword );
             statement.setString( 2, user.getUsername().toLowerCase() );
 
             statement.execute();
             conn.commit();
 
-            //TODO return true
+            return true;
         } catch ( SQLException e ) {
             e.printStackTrace();
             try {
@@ -105,12 +108,12 @@ public class DB_Handler {
         return false;
     }
 
-    public List<Building> getBuildingName(User user) {
+    public List<Building> getBuildingName( User user ) {
         List<String> buildingIDs = new ArrayList<>();
 
         try {
-            statement = conn.prepareStatement( "SELECT * FROM [dbo].[User_Building] WHERE " +
-                    "lower( userID ) = ?" );
+            statement = conn.prepareStatement( "SELECT * FROM [User_Building] WHERE " +
+                    "lower( [userID] ) = ?" );
             statement.setString( 1, user.getUsername().toLowerCase() );
 
             set = statement.executeQuery();
@@ -123,8 +126,8 @@ public class DB_Handler {
             set = null;
 
             for ( String id : buildingIDs ) {
-                statement = conn.prepareStatement( "SELECT * FROM [dbo].[Building_Header] " +
-                        "WHERE buildingID = ?" );
+                statement = conn.prepareStatement( "SELECT * FROM [Building_Header] " +
+                        "WHERE [buildingID] = ?" );
                 statement.setString( 1, id );
                 set = statement.executeQuery();
 
@@ -140,7 +143,7 @@ public class DB_Handler {
                 set = null;
             }
 
-            //TODO return List building
+            return buildings;
         } catch ( SQLException e ) {
             e.printStackTrace();
         } finally {
@@ -154,7 +157,7 @@ public class DB_Handler {
         return null;
     }
 
-    private void addBuildingToList(Building building) {
+    private void addBuildingToList( Building building ) {
         buildings.add( building );
     }
 
@@ -163,10 +166,10 @@ public class DB_Handler {
 
         try {
             conn.setAutoCommit( false );
-            statement = conn.prepareStatement( "INSERT INTO [dbo].[Compliance_Inspection] " +
-                    "( buildingID, inspectionDate, finding, description, inspectionStatus, image," +
-                    " createdBy, creationDate ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )" );
-            statement.setString( 1, complianceInspection.getBuildingID() );
+            statement = conn.prepareStatement( "INSERT INTO [Compliance_Inspection] " +
+                    "( [buildingID], [inspectionDate], [finding], [description], [inspectionStatus], [image]," +
+                    " [createdBy], [creationDate] ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )" );
+            statement.setInt( 1, complianceInspection.getBuildingID() );
             statement.setDate( 2, date );
             statement.setString( 3, complianceInspection.getFinding() );
             statement.setString( 4, complianceInspection.getDescription() );
@@ -177,7 +180,12 @@ public class DB_Handler {
 
             statement.execute();
             conn.commit();
-            //TODO return true
+
+            statement.close();
+            conn.setAutoCommit( true );
+            conn.close();
+
+            return true;
         } catch ( SQLException e ) {
             e.printStackTrace();
             try {
@@ -186,32 +194,32 @@ public class DB_Handler {
                 e1.printStackTrace();
             }
         } finally {
-            try {
-                statement.close();
-                conn.setAutoCommit( true );
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                statement.close();
+//                conn.setAutoCommit( true );
+//                conn.close();
+//            } catch ( SQLException e ) {
+//                e.printStackTrace();
+//            }
         }
 
         return false;
     }
 
-    private FileInputStream getBinaryStreamFromFile(File imageFile ) {
+    private FileInputStream getBinaryStreamFromFile( File imageFile ) {
         byte[] fileContent = new byte[ ( int ) imageFile.length() ];
         FileInputStream inputStream = null;
 
         try {
             inputStream = new FileInputStream( imageFile );
-            inputStream.read(fileContent);
+            inputStream.read( fileContent );
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (inputStream != null) {
+            if ( inputStream != null ) {
                 try {
                     inputStream.close();
-                } catch (IOException e) {
+                } catch ( IOException e ) {
                     e.printStackTrace();
                 }
             }
@@ -221,8 +229,6 @@ public class DB_Handler {
     }
 
     public static void main( String[] args ) {
-        DB_Handler handler = new DB_Handler();
-        User user = new User( "John Doe", "John.Doe001" );
-        handler.getBuildingName( user );
+//        Uri uri = Uri.parse( "android.resource://app/res/drawable/image_for_upload_test.jpg" );
     }
 }

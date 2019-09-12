@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class GeneralInfoAdapter extends BaseAdapter {
-    private final ArrayList<Map.Entry<String, String>> data;
+    private final ArrayList< Map.Entry< String, String > > data;
 
     public GeneralInfoAdapter( Map< String, String > myMap ) {
         data = new ArrayList<>();
@@ -23,17 +23,17 @@ public class GeneralInfoAdapter extends BaseAdapter {
     }
 
     @Override
-    public Map.Entry< String, String > getItem(int position) {
+    public Map.Entry< String, String > getItem( int position ) {
         return data.get( position );
     }
 
     @Override
-    public long getItemId(int position) {
+    public long getItemId( int position ) {
         return position;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView( int position, View convertView, ViewGroup parent ) {
         final View view;
 
         if( convertView == null ) {

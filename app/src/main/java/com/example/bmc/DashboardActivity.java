@@ -24,29 +24,33 @@ public class DashboardActivity extends AppCompatActivity {
     private ListView listView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        setSupportActionBar(toolbar);
+    protected void onCreate( Bundle savedInstanceState ) {
+        super.onCreate( savedInstanceState );
+        createActivity();
+    }
 
-        listView = findViewById(R.id.lv_building_names);
+    private void createActivity() {
+        setContentView( R.layout.activity_dashboard );
+        Toolbar toolbar = findViewById( R.id.toolbar );
+        toolbar.setNavigationIcon( R.drawable.ic_arrow_back_white_24dp );
+        setSupportActionBar( toolbar );
+
+        listView = findViewById( R.id.lv_building_names );
         populate();
-        listView.setAdapter( new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, buildingNames) );
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setAdapter( new ArrayAdapter<>( this, android.R.layout.simple_list_item_1, buildingNames ) );
+        listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Building building = buildings.get(position);
+            public void onItemClick( AdapterView<?> parent, View view, int position, long id ) {
+                Building building = buildings.get( position );
                 Intent intent = new Intent( getApplicationContext(), GeneralInfoActivity.class );
                 intent.putExtra( "MyBuilding", building );
                 startActivity( intent );
             }
-        });
+        } );
     }
 
     private void populate() {
-        for (Building building : buildings ) {
+        for ( Building building : buildings ) {
             buildingNames.add( building.getName() );
         }
     }

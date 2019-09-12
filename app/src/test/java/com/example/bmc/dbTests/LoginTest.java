@@ -1,5 +1,6 @@
 package com.example.bmc.dbTests;
 
+import com.example.bmc.auxiliary.User;
 import com.example.bmc.auxiliary.UserCredentials;
 import com.example.bmc.db.DB_Handler;
 
@@ -26,6 +27,8 @@ public class LoginTest {
 
     @Test
     public void login_test() {
-        Assert.assertNotNull( handler.login( userCredentials.getUsername(), userCredentials.getPassword() ) );
+        User returned = handler.login( userCredentials.getUsername(), userCredentials.getPassword() );
+//        Assert.assertNotNull( returned );
+        Assert.assertEquals( userCredentials.getUsername(), returned.getUsername() );
     }
 }

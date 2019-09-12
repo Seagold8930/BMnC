@@ -5,7 +5,11 @@ import java.io.File;
 public class ComplianceImage {
     private File imageFile;
 
-    public ComplianceImage(File imageFile) {
+    public ComplianceImage() {
+        this.imageFile = null;
+    }
+
+    public ComplianceImage( File imageFile ) {
         this.imageFile = imageFile;
     }
 
@@ -13,7 +17,7 @@ public class ComplianceImage {
         return imageFile;
     }
 
-    public void setImageFile(File imageFile) {
+    public void setImageFile( File imageFile ) {
         this.imageFile = imageFile;
     }
 }

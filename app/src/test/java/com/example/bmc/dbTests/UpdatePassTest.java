@@ -28,5 +28,9 @@ public class UpdatePassTest {
     @Test
     public void update_password_test() {
         Assert.assertTrue( handler.updatePassword("NewPassword1000", user ) );
+
+        //reverting to default
+        handler = new DB_Handler();
+        Assert.assertTrue( handler.updatePassword( "John.Doe001", user ) );
     }
 }
