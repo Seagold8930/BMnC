@@ -11,16 +11,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
-import com.example.bmc.dummy.Building;
+import com.example.bmc.auxiliary.Building;
+import com.example.bmc.auxiliary.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class GeneralInfoActivity extends AppCompatActivity {
     private Building building;
+    private User user;
     private LinkedHashMap< String,String > buildingInfo = new LinkedHashMap<>();
-    ListView listView;
-    FloatingActionButton floatingActionButton;
+    private ListView listView;
+    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -35,6 +38,8 @@ public class GeneralInfoActivity extends AppCompatActivity {
         setSupportActionBar( toolbar );
 
         building = ( Building ) getIntent().getSerializableExtra( "MyBuilding" );
+        user = ( User ) getIntent().getSerializableExtra( "User" );
+
         populate( building );
         listView = findViewById( R.id.lv_general_info );
         show( buildingInfo );
@@ -42,10 +47,10 @@ public class GeneralInfoActivity extends AppCompatActivity {
     }
 
     private void populate( Building building ) {
-        buildingInfo.put( "Building Name", building.getName() );
-        buildingInfo.put( "Address", building.getAddress() );
-        buildingInfo.put( "Location", building.getLocation() );
-        buildingInfo.put( "Year Built", String.valueOf( building.getYearBuilt() ) );
+        buildingInfo.put( "Building Name", building.getBuildingName() );
+        buildingInfo.put( "Address", building.getBuildingAddress() );
+        buildingInfo.put( "Location", building.getBuildingLocation() );
+        buildingInfo.put( "Year Built", String.valueOf( building.getBuildingYearBuilt() ) );
     }
 
     private void show( HashMap< String, String > buildingInfo ) {
@@ -58,6 +63,8 @@ public class GeneralInfoActivity extends AppCompatActivity {
             @Override
             public void onClick( View v ) {
                 Intent intent = new Intent( getApplicationContext(), ComplianceInspectionActivity.class );
+                intent.putExtra( "User", user );
+                intent.putExtra( "Buildings", getIntent().getSerializableExtra( "Buildings" ) );
                 intent.putExtra( "MyBuilding", building );
                 startActivity( intent );
             }
@@ -92,7 +99,14 @@ public class GeneralInfoActivity extends AppCompatActivity {
     }
 
     private void openDashboard() {
-        startActivity( new Intent( getApplicationContext(), DashboardActivity.class ) );
+        Intent intent = new Intent( getApplicationContext(), DashboardActivity.class );
+        Bundle bundle = getIntent().getExtras();
+        ArrayList<Building> buildings = new ArrayList<>();
+        buildings = (ArrayList< Building >)bundle.getSerializable( "Buildings" );
+        user = ( User )bundle.getSerializable( "User" );
+        intent.putExtra( "Buildings", buildings );
+        intent.putExtra( "User", user );
+        startActivity( intent );
     }
 
     @Override

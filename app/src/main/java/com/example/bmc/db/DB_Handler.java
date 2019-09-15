@@ -1,24 +1,37 @@
 package com.example.bmc.db;
 
-import android.net.Uri;
+import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 
 import com.example.bmc.auxiliary.Building;
+import com.example.bmc.auxiliary.ComplianceImage;
 import com.example.bmc.auxiliary.ComplianceInspection;
 import com.example.bmc.auxiliary.User;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
-public class DB_Handler {
+public class DB_Handler implements Serializable {
     private Connection conn = null;
     private PreparedStatement statement;
     private ResultSet set;
@@ -28,15 +41,18 @@ public class DB_Handler {
 
         try {
 //            Class.forName( "com.microsoft.sqlserver.jdbc.SQLServerDriver" );
+
             Class.forName( "net.sourceforge.jtds.jdbc.Driver" );
-            String connectionString = "jdbc:jtds:sqlserver://bmcs.database.windows.net:1433/BM&C;encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;";
             String username = "bmcs_admin";
             String password = "Weltec2019";
+            String connectionString = "jdbc:jtds:sqlserver://bmcs.database.windows.net:1433/BMnC;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;";
+
+//            String connectionString = "jdbc:sqlserver://bmcs.database.windows.net:1433;database=BMnC;sslProtocol=TLSv1.1;encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+
             conn = DriverManager.getConnection( connectionString, username, password );
         } catch ( Exception e ) {
             e.printStackTrace();
         }
-
     }
 
     public User login( String username, String password ) {
@@ -87,21 +103,18 @@ public class DB_Handler {
             statement.execute();
             conn.commit();
 
+            statement.close();
+            conn.setAutoCommit( true );
+            conn.close();
+
             return true;
         } catch ( SQLException e ) {
             e.printStackTrace();
             try {
                 conn.rollback();
+                conn.setAutoCommit( true );
             } catch ( SQLException e1 ) {
                 e1.printStackTrace();
-            }
-        } finally {
-            try {
-                statement.close();
-                conn.setAutoCommit( true );
-                conn.close();
-            } catch ( SQLException e ) {
-                e.printStackTrace();
             }
         }
 
@@ -122,9 +135,6 @@ public class DB_Handler {
                 buildingIDs.add( set.getString( "buildingID" ) );
             }
 
-            statement = null;
-            set = null;
-
             for ( String id : buildingIDs ) {
                 statement = conn.prepareStatement( "SELECT * FROM [Building_Header] " +
                         "WHERE [buildingID] = ?" );
@@ -138,20 +148,15 @@ public class DB_Handler {
                             set.getString( "location" ),
                             set.getInt( "yearBuilt" ) ) );
                 }
-
-                statement = null;
-                set = null;
             }
+
+            set.close();
+            statement.close();
+            conn.close();
 
             return buildings;
         } catch ( SQLException e ) {
             e.printStackTrace();
-        } finally {
-            try {
-                conn.close();
-            } catch ( SQLException e ) {
-                e.printStackTrace();
-            }
         }
 
         return null;
@@ -163,23 +168,52 @@ public class DB_Handler {
 
     public boolean uploadComplianceInspection( ComplianceInspection complianceInspection, User user ) {
         Date date = new java.sql.Date( new java.util.Date().getTime() );
+        long timeNow = Calendar.getInstance().getTimeInMillis();
+        Timestamp date_time = new java.sql.Timestamp( timeNow );
+
 
         try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            complianceInspection.getImage().getImageFile().compress( Bitmap.CompressFormat.JPEG, 100, outputStream );
+            String encodedImage = Base64.encodeToString( outputStream.toByteArray(), Base64.DEFAULT );
+//            InputStream stream = new FileInputStream( complianceInspection.getImage().getImageFile() );
             conn.setAutoCommit( false );
-            statement = conn.prepareStatement( "INSERT INTO [Compliance_Inspection] " +
-                    "( [buildingID], [inspectionDate], [finding], [description], [inspectionStatus], [image]," +
-                    " [createdBy], [creationDate] ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )" );
-            statement.setInt( 1, complianceInspection.getBuildingID() );
-            statement.setDate( 2, date );
-            statement.setString( 3, complianceInspection.getFinding() );
-            statement.setString( 4, complianceInspection.getDescription() );
-            statement.setString( 5, complianceInspection.getStatus() );
-            statement.setBinaryStream( 6, getBinaryStreamFromFile( complianceInspection.getImage().getImageFile() ) );
-            statement.setString( 7, user.getUsername() );
-            statement.setDate( 8, date );
+//            statement = null;
+            Statement statement = conn.createStatement();
+            statement.execute( "INSERT INTO [Compliance_Inspection] " +
+                    "( [buildingID], [inspectionDate], [finding], [description], [inspectionStatus]," +
+                    " [image], [createdBy], [creationDate] ) VALUES ( " + complianceInspection.getBuildingID() + ", " +
+                    date + ", " + complianceInspection.getFinding() + ", " + complianceInspection.getDescription() + ", " +
+                    complianceInspection.getStatus() + ", " + encodedImage + ", " + user.getUsername() +
+                    ", " + date_time + " );" );
+//            statement = conn.prepareStatement( "INSERT INTO [dbo].[Compliance_Inspection] " +
+//                    "( buildingID, inspectionDate, finding, description, inspectionStatus, image," +
+//                    " createdBy, creationDate ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )" );
 
-            statement.execute();
-            conn.commit();
+//            if ( statement != null ) {
+//                statement.setInt( 1, complianceInspection.getBuildingID() );
+//                statement.setDate( 2, date );
+//                statement.setString( 3, complianceInspection.getFinding() );
+//                statement.setString( 4, complianceInspection.getDescription() );
+//                statement.setString( 5, complianceInspection.getStatus() );
+//                statement.setBinaryStream( 6,  stream, (int)complianceInspection.getImage().getImageFile().length() );
+//                statement.setString( 7, user.getUsername() );
+//                statement.setTimestamp( 8, date_time );
+//
+//                statement.execute();
+                conn.commit();
+//            }
+
+//
+//            statement = conn.prepareStatement( "UPDATE [Compliance_Inspection] SET [image] = ? " +
+//                    "WHERE [buildingID] = ? AND [inspectionDate] = ? AND [creationDate] = ?" );
+//            statement.setBinaryStream( 1,  stream, (int)complianceInspection.getImage().getImageFile().length() );
+//            statement.setInt( 2, complianceInspection.getBuildingID() );
+//            statement.setDate( 3, date );
+//            statement.setTimestamp( 4, date_time );
+//
+//            statement.executeUpdate();
+//            conn.commit();
 
             statement.close();
             conn.setAutoCommit( true );
@@ -193,42 +227,41 @@ public class DB_Handler {
             } catch ( SQLException e1 ) {
                 e1.printStackTrace();
             }
-        } finally {
-//            try {
-//                statement.close();
-//                conn.setAutoCommit( true );
-//                conn.close();
-//            } catch ( SQLException e ) {
-//                e.printStackTrace();
-//            }
         }
 
         return false;
     }
 
-    private FileInputStream getBinaryStreamFromFile( File imageFile ) {
-        byte[] fileContent = new byte[ ( int ) imageFile.length() ];
-        FileInputStream inputStream = null;
+//    private ByteArrayInputStream getBytesFromFile(File imageFile ) {
+//        byte[] fileContent = new byte[ ( int ) imageFile.length() ];
+//        FileInputStream inputStream = null;
+//
+//        try {
+//            inputStream = new FileInputStream( imageFile );
+//            inputStream.read( fileContent );
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if ( inputStream != null ) {
+//                try {
+//                    inputStream.close();
+//                } catch ( IOException e ) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//
+//        return new ByteArrayInputStream( fileContent );
+//    }
 
-        try {
-            inputStream = new FileInputStream( imageFile );
-            inputStream.read( fileContent );
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if ( inputStream != null ) {
-                try {
-                    inputStream.close();
-                } catch ( IOException e ) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    @SuppressLint("NewApi")
+    public static void main(String[] args ) throws IOException {
+        File file = new File( "D:\\Users\\danny\\AndroidStudioProjects\\BMC\\app\\src\\main\\res\\drawable\\image_for_upload_test.jpg" );
 
-        return inputStream;
-    }
-
-    public static void main( String[] args ) {
-//        Uri uri = Uri.parse( "android.resource://app/res/drawable/image_for_upload_test.jpg" );
+        Bitmap bitmap = BitmapFactory.decodeFile( file.getAbsolutePath() );
+        ComplianceImage img = new ComplianceImage( bitmap );
+//        System.out.println( Files.readAllBytes( img.getImageFile().toPath() ).toString() );
+        ComplianceInspection inspection = new ComplianceInspection( 1, null, null, null, null, img );
+        new DB_Handler().uploadComplianceInspection( inspection, new User( "John Doe", "John.Doe001" ) );
     }
 }

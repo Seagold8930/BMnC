@@ -12,15 +12,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.bmc.dummy.Building;
-import com.example.bmc.dummy.DummyBuilding;
+import com.example.bmc.auxiliary.Building;
+import com.example.bmc.auxiliary.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DashboardActivity extends AppCompatActivity {
-    private List<Building> buildings = DummyBuilding.getDummyData();
+    private ArrayList<Building> buildings = new ArrayList<>();
     private List<String> buildingNames = new ArrayList<>();
+    private User user;
     private ListView listView;
 
     @Override
@@ -35,6 +36,11 @@ public class DashboardActivity extends AppCompatActivity {
         toolbar.setNavigationIcon( R.drawable.ic_arrow_back_white_24dp );
         setSupportActionBar( toolbar );
 
+        Bundle bundle = getIntent().getExtras();
+
+        buildings = ( ArrayList< Building > )bundle.getSerializable( "Buildings" );
+        user = ( User )bundle.getSerializable( "User" );
+
         listView = findViewById( R.id.lv_building_names );
         populate();
         listView.setAdapter( new ArrayAdapter<>( this, android.R.layout.simple_list_item_1, buildingNames ) );
@@ -44,6 +50,8 @@ public class DashboardActivity extends AppCompatActivity {
                 Building building = buildings.get( position );
                 Intent intent = new Intent( getApplicationContext(), GeneralInfoActivity.class );
                 intent.putExtra( "MyBuilding", building );
+                intent.putExtra( "Buildings", buildings );
+                intent.putExtra( "User", user );
                 startActivity( intent );
             }
         } );
@@ -51,7 +59,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void populate() {
         for ( Building building : buildings ) {
-            buildingNames.add( building.getName() );
+            buildingNames.add( building.getBuildingName() );
         }
     }
 

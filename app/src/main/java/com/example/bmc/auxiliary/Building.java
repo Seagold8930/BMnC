@@ -1,6 +1,8 @@
 package com.example.bmc.auxiliary;
 
-public class Building {
+import java.io.Serializable;
+
+public class Building implements Serializable {
     private String buildingID;
     private String buildingName;
     private String buildingAddress;

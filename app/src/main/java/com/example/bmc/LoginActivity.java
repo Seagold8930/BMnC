@@ -7,6 +7,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.StrictMode;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -33,9 +34,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.bmc.auxiliary.Building;
 import com.example.bmc.auxiliary.User;
 import com.example.bmc.auxiliary.UserCredentials;
-import com.example.bmc.db.DB_Handler;
 import com.example.bmc.validate.Validate;
 
 import java.sql.Connection;
@@ -43,7 +44,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,15 +52,11 @@ import java.util.List;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
     public static final int PERMISSION_REQUEST_CODE = 100;
+    private String message = "";
     private UserCredentials userCredentials;
+    protected boolean loginSuccess = false;
     private User user;
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "dan.mota001:Dan.Mota001", "admin:admin"
-    };
+    private ArrayList<Building> buildings = new ArrayList<>();
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -84,8 +80,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView = findViewById( R.id.password );
 
         //TODO remove after testing
-        mUsernameView.setText( "Jane.Smith001" );
-        mPasswordView.setText( "MyPass1000" );
+//        mUsernameView.setText( "Jane.Smith001" );
+//        mPasswordView.setText( "MyPass1000" );
+        mUsernameView.setText( "john.doe001" );
+        mPasswordView.setText( "John.Doe001" );
 
         mPasswordView.setOnEditorActionListener( new TextView.OnEditorActionListener() {
             @Override
@@ -178,7 +176,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // perform the user login attempt.
             showProgress( true );
 //            mAuthTask = new UserLoginTask( username, password );
-            mAuthTask = new UserLoginTask( userCredentials.getUsername(), userCredentials.getPassword() );
+            mAuthTask = new UserLoginTask( userCredentials.getUsername(), userCredentials.getPassword(), loginSuccess );
             mAuthTask.execute( ( Void ) null );
         }
     }
@@ -306,13 +304,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * the user.
      */
     public class UserLoginTask extends AsyncTask< Void, Void, Boolean > {
-
         private final String mUsername;
         private final String mPassword;
+        private boolean loginSuccess;
 
-        UserLoginTask( String username, String password ) {
-            mUsername = username;
-            mPassword = password;
+        UserLoginTask( String username, String password, boolean loginSuccess ) {
+            this.mUsername = username;
+            this.mPassword = password;
+            this.loginSuccess = loginSuccess;
         }
 
         @Override
@@ -340,27 +339,37 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //            user = new DB_Handler().login( mUsername, mPassword );
 //            return user.getUsername().equalsIgnoreCase( mUsername );
 
+
+
+
+
+
             Connection conn = getConnection();
 
             if( conn == null ) {
                 Log.d( "AsyncTask", "Null connection" );
-                return false;
+                Snackbar.make( findViewById( R.id.username ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
+                        .setAction( "Action", null ).show();
+                return loginSuccess;
             } else {
+                loginSuccess = false;
+
                 try {
                     PreparedStatement statement = conn.prepareStatement( "SELECT * FROM [User] WHERE [userID] = ?" );
                     statement.setString( 1, userCredentials.getUsername() );
                     ResultSet set = statement.executeQuery();
 
-//                    ResultSet set = conn.getMetaData().getTables( null, null, null, null );
-
                     while ( set.next() ) {
-//                        Log.v( "Tables: ", set.getString( 3 ) );
                         UserCredentials db_credentials = new UserCredentials( set.getString( "userID" ), set.getString( "password" ) );
-//
+
                         if( db_credentials.getUsername().equalsIgnoreCase( userCredentials.getUsername() ) && db_credentials.getPassword().equals( userCredentials.getPassword() ) ) {
                             user = new User( set.getString( "name" ), set.getString( "userID" ) );
+                            loginSuccess = true;
                         }
                     }
+
+                    if (loginSuccess)
+                        getBuildingList( conn, statement, set );
 
                     userCredentials = null;
                     set.close();
@@ -370,7 +379,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return true;
                 } catch ( SQLException e ) {
                     e.printStackTrace();
-                    return false;
+                    Snackbar.make( findViewById( R.id.contents ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
+                            .setAction( "Action", null ).show();
+                    return loginSuccess;
                 }
             }
         }
@@ -379,20 +390,62 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy( policy );
 
-            String connectionString = "jdbc:jtds:sqlserver://bmcs.database.windows.net:1433/BM&C;encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;";
+            String connectionString = "jdbc:jtds:sqlserver://bmcs.database.windows.net:1433/BMnC;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;";
+//            String connectionString = "jdbc:sqlserver://bmcs.database.windows.net:1433;database=BMnC;encrypt=true;sslProtocol=TLSv1.1;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+
+//            String connectionString = "jdbc:sqlserver://bmcs.database.windows.net:1433;database=BMnC;sslProtocol=TLSv1.1;encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
             String username = "bmcs_admin";
             String password = "Weltec2019";
 
             try {
+//                Class.forName( "com.microsoft.sqlserver.jdbc.SQLServerDriver" );
                 Class.forName( "net.sourceforge.jtds.jdbc.Driver" );
                 return DriverManager.getConnection( connectionString, username, password );
             } catch ( ClassNotFoundException e ) {
                 e.printStackTrace();
             } catch ( SQLException e ) {
                 e.printStackTrace();
+                Snackbar.make( findViewById( R.id.username ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
+                        .setAction( "Action", null ).show();
+                loginSuccess = false;
             }
 
             return null;
+        }
+
+        private void getBuildingList(Connection conn, PreparedStatement statement, ResultSet set) throws SQLException {
+            List<String> buildingIDs = new ArrayList<>();
+
+            statement = conn.prepareStatement( "SELECT * FROM [User_Building] WHERE " +
+                    "lower( [userID] ) = ?" );
+            statement.setString( 1, user.getUsername().toLowerCase() );
+
+            set = statement.executeQuery();
+
+            while ( set.next() ) {
+                buildingIDs.add( set.getString( "buildingID" ) );
+            }
+
+            for ( String id : buildingIDs ) {
+                statement = conn.prepareStatement( "SELECT * FROM [Building_Header] " +
+                        "WHERE [buildingID] = ?" );
+                statement.setString( 1, id );
+                set = statement.executeQuery();
+
+                while ( set.next() ) {
+                    addBuildingToList( new Building( set.getString( "buildingID" ),
+                            set.getString( "buildingName" ),
+                            set.getString( "address" ),
+                            set.getString( "location" ),
+                            set.getInt( "yearBuilt" ) ) );
+                }
+            }
+
+
+        }
+
+        private void addBuildingToList( Building building ) {
+            buildings.add( building );
         }
 
         @Override
@@ -400,17 +453,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress( false );
 
-            if ( success ) {
+            if ( success && loginSuccess ) {
                 if( mUsername.toLowerCase().equals( mPassword.toLowerCase() ) ) {
                     Intent intent = new Intent( getApplicationContext(), ChangePasswordActivity.class );
+                    intent.putExtra( "User", user );
+                    intent.putExtra( "Buildings", buildings );
                     intent.putExtra( "Default Password", mPassword );
                     startActivity( intent );
                 } else {
-                    startActivity( new Intent( getApplicationContext(), DashboardActivity.class ) );
+                    Intent intent = new Intent( getApplicationContext(), DashboardActivity.class );
+                    intent.putExtra( "User", user );
+                    intent.putExtra( "Buildings", buildings );
+                    startActivity( intent );
                 }
             } else {
-                mPasswordView.setError( getString(R.string.error_incorrect_password) );
-                mPasswordView.requestFocus();
+                Snackbar.make( findViewById( R.id.username ), "Login failed. Check your credentials.", Snackbar.LENGTH_LONG )
+                        .setAction( "Action", null ).show();
             }
         }
 

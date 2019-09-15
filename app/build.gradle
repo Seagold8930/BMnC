@@ -49,8 +49,9 @@ dependencies {
     androidTestImplementation 'org.mockito:mockito-android:2.7.22'
 
     // https://mvnrepository.com/artifact/net.sourceforge.jtds/jtds
-    implementation 'jtds:jtds:1.2'
+//    implementation 'jtds:jtds:1.2'
 
 //    implementation project ( ':sqljdbc42' )
-//    implementation project ( ':jtds-1.3.1' )
+    implementation project ( ':mssql-jdbc-6.4.0.jre8' )
+    implementation project ( ':jtds-1.2.8' )
 }
