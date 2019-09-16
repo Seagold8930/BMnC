@@ -72,6 +72,14 @@ public class ChangePasswordActivity extends AppCompatActivity {
     }
 
     private void validateFields(String newPass, String confirmPass) {
+        if ( mUp != null ) {
+            return;
+        }
+
+        // Reset errors.
+        mNewPass.setError( null );
+        mConfirmPass.setError( null );
+
         Validate validate = new Validate();
         cancel = false;
 
@@ -244,6 +252,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 Intent intent = new Intent( getApplicationContext(), DashboardActivity.class );
                 intent.putExtra( "User", user );
                 intent.putExtra( "Buildings", buildings );
+                finish();
                 startActivity( intent );
             }
         }

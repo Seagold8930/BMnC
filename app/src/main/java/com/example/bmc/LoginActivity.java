@@ -52,7 +52,6 @@ import java.util.List;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
     public static final int PERMISSION_REQUEST_CODE = 100;
-    private String message = "";
     private UserCredentials userCredentials;
     protected boolean loginSuccess = false;
     private User user;
@@ -80,10 +79,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView = findViewById( R.id.password );
 
         //TODO remove after testing
-//        mUsernameView.setText( "Jane.Smith001" );
-//        mPasswordView.setText( "MyPass1000" );
-        mUsernameView.setText( "john.doe001" );
-        mPasswordView.setText( "John.Doe001" );
+        mUsernameView.setText( "Jane.Smith001" );
+        mPasswordView.setText( "MyPass1000" );
+//        mUsernameView.setText( "john.doe001" );
+//        mPasswordView.setText( "John.Doe001" );
 
         mPasswordView.setOnEditorActionListener( new TextView.OnEditorActionListener() {
             @Override
@@ -100,7 +99,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mSignInButton.setOnClickListener( new OnClickListener() {
             @Override
             public void onClick( View view ) {
-//                startActivity( new Intent( getApplicationContext(), DashboardActivity.class ) );
                 userCredentials = new UserCredentials( mUsernameView.getText().toString(), mPasswordView.getText().toString() );
                 attemptLogin();
             }
@@ -425,6 +423,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             while ( set.next() ) {
                 buildingIDs.add( set.getString( "buildingID" ) );
             }
+
+            buildings = new ArrayList<>();
 
             for ( String id : buildingIDs ) {
                 statement = conn.prepareStatement( "SELECT * FROM [Building_Header] " +
