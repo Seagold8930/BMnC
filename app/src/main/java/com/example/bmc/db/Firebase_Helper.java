@@ -10,7 +10,6 @@ public class Firebase_Helper {
     private DatabaseReference reference;
 
     public interface DataStatus {
-
         void dataIsInserted();
     }
 
@@ -20,13 +19,14 @@ public class Firebase_Helper {
     }
 
     public void addComplianceInspection( ComplianceInspection inspection, final DataStatus status ) {
+
         String entry_key = reference.push().getKey();
-        reference.child( entry_key ).setValue( inspection ).addOnSuccessListener(new OnSuccessListener<Void>() {
+        reference.child( entry_key ).setValue( inspection ).addOnSuccessListener( new OnSuccessListener< Void >() {
             @Override
-            public void onSuccess(Void aVoid) {
+            public void onSuccess( Void aVoid ) {
                 status.dataIsInserted();
             }
-        });
+        } );
 
     }
 }

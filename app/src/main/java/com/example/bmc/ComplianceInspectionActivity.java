@@ -5,20 +5,15 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import androidx.annotation.Nullable;
 
 import com.example.bmc.db.Firebase_Helper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Base64;
@@ -137,7 +132,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         spinner = findViewById( R.id.status );
         populateList();
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>( getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, spinnerList );
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>( this, android.R.layout.simple_list_item_1, spinnerList );
         spinner.setAdapter( arrayAdapter );
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -149,8 +144,6 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
                 }
 
                 statusSelection = spinner.getSelectedItem().toString();
-                Toast.makeText( getApplicationContext(), spinner.getSelectedItem().toString(), Toast.LENGTH_SHORT ).show();
-//                selection = spinner.getSelectedItem().toString();
             }
 
             @Override
@@ -175,7 +168,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     private void takePicture() {
         Intent photo = new Intent( MediaStore.ACTION_IMAGE_CAPTURE );
 //        String filepath = "file:///sdcard/";
-//        imageName = String.format( "%s%s%s", "BM&C_", new SimpleDateFormat("ddMMyyhhmmss").format( new Date() ), ".jpg" );
+        imageName = String.format( "%s%s%s", "BM&C_", new SimpleDateFormat("ddMMyyhhmmss").format( new Date() ), ".jpg" );
 //        Uri uri = Uri.parse( filepath + imageName );
 //        photo.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult( photo, 0 );
@@ -230,21 +223,21 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
             errorText.setError( getString( R.string.error_selection_required ) );
             errorText.requestFocus();
         } else {
-            showProgress(true);
+            showProgress( true );
             ComplianceInspection inspection = new ComplianceInspection(building.getBuildingID(),
                     date.getText().toString(), finding.getText().toString(),
                     description.getText().toString(), statusSelection, encodeImage(),
                     user.getName(), new Date().toString(), user.getName(),
                     new Date().toString(), "Open");
 
-            new Firebase_Helper().addComplianceInspection(inspection, new Firebase_Helper.DataStatus() {
+            new Firebase_Helper().addComplianceInspection( inspection, new Firebase_Helper.DataStatus() {
                 @Override
                 public void dataIsInserted() {
-                    showProgress(false);
+                    showProgress( false );
                     Toast.makeText(getApplicationContext(), "Compliance Inspection upload successful.", Toast.LENGTH_SHORT).show();
                     finish();
                 }
-            });
+            } );
         }
     }
 
