@@ -142,7 +142,7 @@ public class DB_Handler implements Serializable {
                 set = statement.executeQuery();
 
                 while ( set.next() ) {
-                    addBuildingToList( new Building( set.getString( "buildingID" ),
+                    addBuildingToList( new Building( set.getInt( "buildingID" ),
                             set.getString( "buildingName" ),
                             set.getString( "address" ),
                             set.getString( "location" ),
@@ -173,19 +173,19 @@ public class DB_Handler implements Serializable {
 
 
         try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            complianceInspection.getImage().getImageFile().compress( Bitmap.CompressFormat.JPEG, 100, outputStream );
-            String encodedImage = Base64.encodeToString( outputStream.toByteArray(), Base64.DEFAULT );
+//            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//            complianceInspection.getImage().getImageFile().compress( Bitmap.CompressFormat.JPEG, 100, outputStream );
+//            String encodedImage = Base64.encodeToString( outputStream.toByteArray(), Base64.DEFAULT );
 //            InputStream stream = new FileInputStream( complianceInspection.getImage().getImageFile() );
             conn.setAutoCommit( false );
 //            statement = null;
             Statement statement = conn.createStatement();
-            statement.execute( "INSERT INTO [Compliance_Inspection] " +
-                    "( [buildingID], [inspectionDate], [finding], [description], [inspectionStatus]," +
-                    " [image], [createdBy], [creationDate] ) VALUES ( " + complianceInspection.getBuildingID() + ", " +
-                    date + ", " + complianceInspection.getFinding() + ", " + complianceInspection.getDescription() + ", " +
-                    complianceInspection.getStatus() + ", " + encodedImage + ", " + user.getUsername() +
-                    ", " + date_time + " );" );
+//            statement.execute( "INSERT INTO [Compliance_Inspection] " +
+//                    "( [buildingID], [inspectionDate], [finding], [description], [inspectionStatus]," +
+//                    " [image], [createdBy], [creationDate] ) VALUES ( " + complianceInspection.getBuildingID() + ", " +
+//                    date + ", " + complianceInspection.getFinding() + ", " + complianceInspection.getDescription() + ", " +
+//                    complianceInspection.getStatus() + ", " + encodedImage + ", " + user.getUsername() +
+//                    ", " + date_time + " );" );
 //            statement = conn.prepareStatement( "INSERT INTO [dbo].[Compliance_Inspection] " +
 //                    "( buildingID, inspectionDate, finding, description, inspectionStatus, image," +
 //                    " createdBy, creationDate ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )" );
@@ -261,7 +261,7 @@ public class DB_Handler implements Serializable {
         Bitmap bitmap = BitmapFactory.decodeFile( file.getAbsolutePath() );
         ComplianceImage img = new ComplianceImage( bitmap );
 //        System.out.println( Files.readAllBytes( img.getImageFile().toPath() ).toString() );
-        ComplianceInspection inspection = new ComplianceInspection( 1, null, null, null, null, img );
-        new DB_Handler().uploadComplianceInspection( inspection, new User( "John Doe", "John.Doe001" ) );
+//        ComplianceInspection inspection = new ComplianceInspection( 1, null, null, null, null, img );
+//        new DB_Handler().uploadComplianceInspection( inspection, new User( "John Doe", "John.Doe001" ) );
     }
 }

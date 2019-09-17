@@ -7,10 +7,10 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.StrictMode;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
 import android.content.CursorLoader;
@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private UserCredentials userCredentials;
     protected boolean loginSuccess = false;
     private User user;
-    private ArrayList<Building> buildings = new ArrayList<>();
+    private ArrayList<Building> buildings;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -433,7 +433,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 set = statement.executeQuery();
 
                 while ( set.next() ) {
-                    addBuildingToList( new Building( set.getString( "buildingID" ),
+                    addBuildingToList( new Building( set.getInt( "buildingID" ),
                             set.getString( "buildingName" ),
                             set.getString( "address" ),
                             set.getString( "location" ),

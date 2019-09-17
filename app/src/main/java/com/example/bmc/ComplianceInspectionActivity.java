@@ -10,11 +10,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+
+import com.example.bmc.db.Firebase_Helper;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -30,16 +32,11 @@ import com.example.bmc.auxiliary.Building;
 import com.example.bmc.auxiliary.ComplianceImage;
 import com.example.bmc.auxiliary.ComplianceInspection;
 import com.example.bmc.auxiliary.User;
-import com.example.bmc.db.DB_Handler;
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -61,7 +58,6 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     private String imageName;
     private ImageView imageView;
     private Bitmap bitmap;
-    private UploadTask mUp = null;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -92,8 +88,6 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         fabSubmit.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick( View view ) {
-                Snackbar.make( view, "Replace with your own action", Snackbar.LENGTH_LONG )
-                        .setAction( "Action", null ).show();
 //                DB_Handler handler = new DB_Handler();
 //                ComplianceInspection inspection = new ComplianceInspection( 1, null, null, null, null, new ComplianceImage( file ) );
 //                User user = new User( "John Doe", "John.Doe001" );
@@ -109,6 +103,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
                 finish();
             }
         });
+
     }
 
     private void myEditTexts() {
@@ -192,92 +187,33 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     }
 
     private void attemptUpload() {
-        if ( mUp != null ) {
-            return;
-        }
+//        if ( mUp != null ) {
+//            return;
+//        }
+//
+//        mUp = new UploadTask( user, building, date.getText().toString(), finding.getText().toString(), description.getText().toString(), bitmap );
+//        mUp.execute( ( Void ) null );
+        ComplianceInspection inspection = new ComplianceInspection( building.getBuildingID(),
+                date.getText().toString(), finding.getText().toString(),
+                //TODO get inspection status from spinner
+                description.getText().toString(), "Open", encodeImage(),
+                user.getName(), date.getText().toString(), user.getName(),
+                date.getText().toString(), "Open" );
 
-        mUp = new UploadTask( user, building, date.getText().toString(), finding.getText().toString(), description.getText().toString(), bitmap );
-        mUp.execute( ( Void ) null );
+        new Firebase_Helper().addComplianceInspection(inspection, new Firebase_Helper.DataStatus() {
+            @Override
+            public void dataIsInserted() {
+                Snackbar.make( findViewById( R.id.date ), "Compliance inspection uploaded.", Snackbar.LENGTH_LONG )
+                        .setAction( "Action", null ).show();
+            }
+        });
     }
 
-    public class UploadTask extends AsyncTask< Void, Void, Boolean > {
-        private final User user;
-        private final Building building;
-        ComplianceInspection inspection = new ComplianceInspection( 1, null, null, null, null, new ComplianceImage( bitmap ) );
-
-        public UploadTask( User user, Building building, String date, String finding, String description, Bitmap bitmap ) {
-            this.user = user;
-            this.building = building;
-
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-
-            Connection conn = getConnection();
-
-            if( conn == null ) {
-                Log.d( "AsyncTask", "Null connection" );
-                Snackbar.make( findViewById( R.id.cancel_button ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
-                        .setAction( "Action", null ).show();
-                return false;
-            } else {
-                java.sql.Date date = new java.sql.Date( new java.util.Date().getTime() );
-                long timeNow = Calendar.getInstance().getTimeInMillis();
-                Timestamp date_time = new java.sql.Timestamp( timeNow );
-
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                bitmap.compress( Bitmap.CompressFormat.JPEG, 100, outputStream );
-                String encodedImage = Base64.encodeToString( outputStream.toByteArray(), Base64.DEFAULT );
-
-                try {
-                    Statement statement = conn.createStatement();
-                    statement.execute( "INSERT INTO [Compliance_Inspection] " +
-                            "( [buildingID], [inspectionDate], [finding], [description], [inspectionStatus]," +
-                            " [image], [createdBy], [creationDate] ) VALUES ( " + inspection.getBuildingID() + ", " +
-                            date + ", " + inspection.getFinding() + ", " + inspection.getDescription() + ", " +
-                            inspection.getStatus() + ", " + encodedImage + ", " + user.getUsername() +
-                            ", " + date_time + " );" );
-//                    PreparedStatement statement = conn.prepareStatement( "INSERT INTO [Compliance_Inspection] " +
-//                            "( [buildingID], [inspectionDate], [finding], [description], [inspectionStatus]," +
-//                            " [image], [createdBy], [creationDate] ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )" );
-//
-//                    statement.setInt( 1, inspection.getBuildingID() );
-//                    statement.setDate( 2, date );
-//                    statement.setString( 3, inspection.getFinding() );
-//                    statement.setString( 4, inspection.getDescription() );
-//                    statement.setString( 5, inspection.getStatus() );
-//                    statement.setString( 6, encodedImage );
-//                    statement.setString( 7, user.getUsername() );
-//                    statement.setTimestamp( 8, date_time );
-//
-//                    statement.execute();
-
-                } catch ( Exception e ) {
-                    e.printStackTrace();
-                }
-            }
-
-            return null;
-        }
-
-        private Connection getConnection() {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy( policy );
-            try {
-                Class.forName( "net.sourceforge.jtds.jdbc.Driver" );
-                String connectionString = "jdbc:jtds:sqlserver://bmcs.database.windows.net:1433/BMnC;";
-//                Class.forName( "com.microsoft.sqlserver.jdbc.SQLServerDriver" );
-//                String connectionString = "jdbc:sqlserver://bmcs.database.windows.net:1433;database=BMnC;useNTLMv2=true;domain=workgroup;";
-                String username = "bmcs_admin";
-                String password = "Weltec2019";
-                return DriverManager.getConnection( connectionString, username, password );
-            } catch ( Exception e ) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
+    private String encodeImage() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress( Bitmap.CompressFormat.JPEG, 100, outputStream );
+        String encodedImage = Base64.encodeToString( outputStream.toByteArray(), Base64.DEFAULT );
+        return encodedImage;
     }
 
     @Override

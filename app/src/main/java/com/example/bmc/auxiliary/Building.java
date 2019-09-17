@@ -3,13 +3,13 @@ package com.example.bmc.auxiliary;
 import java.io.Serializable;
 
 public class Building implements Serializable {
-    private String buildingID;
+    private int buildingID;
     private String buildingName;
     private String buildingAddress;
     private String buildingLocation;
     private int buildingYearBuilt;
 
-    public Building( String buildingID, String buildingName, String buildingAddress, String buildingLocation, int buildingYearBuilt ) {
+    public Building( int buildingID, String buildingName, String buildingAddress, String buildingLocation, int buildingYearBuilt ) {
         this.buildingID = buildingID;
         this.buildingName = buildingName;
         this.buildingAddress = buildingAddress;
@@ -17,11 +17,11 @@ public class Building implements Serializable {
         this.buildingYearBuilt = buildingYearBuilt;
     }
 
-    public String getBuildingID() {
+    public int getBuildingID() {
         return buildingID;
     }
 
-    public void setBuildingID( String buildingID ) {
+    public void setBuildingID( int buildingID ) {
         this.buildingID = buildingID;
     }
 
