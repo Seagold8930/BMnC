@@ -1,11 +1,15 @@
 package com.example.bmc;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
@@ -18,30 +22,26 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.bmc.auxiliary.Building;
-import com.example.bmc.auxiliary.ComplianceImage;
 import com.example.bmc.auxiliary.ComplianceInspection;
 import com.example.bmc.auxiliary.User;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -51,13 +51,18 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     private EditText date;
     private EditText finding;
     private EditText description;
+    private Spinner spinner;
     private List<String> spinnerList;
+    private String statusSelection;
     private File file;
     private User user;
     private Building building;
     private String imageName;
     private ImageView imageView;
-    private Bitmap bitmap;
+    private static Uri uri;
+    private static Bitmap bitmap;
+    private View mUpCIFormView;
+    private View mProgressView;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -72,9 +77,13 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy( builder.build() );
             takePicture();
-        } else
-            imageView.setImageBitmap( bitmap );
-
+        } else {
+            try {
+                imageView.setImageBitmap( bitmap );
+            } catch ( NullPointerException e ) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void createActivity() {
@@ -114,6 +123,8 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
 
         View focusView = finding;
         focusView.requestFocus();
+        mUpCIFormView = findViewById( R.id.compliance_form );
+        mProgressView = findViewById( R.id.upload_progress );
     }
 
     private String getSystemDate() {
@@ -123,12 +134,30 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     }
 
     private void mySpinner() {
-        Spinner spinner = findViewById( R.id.status );
+        spinner = findViewById( R.id.status );
         populateList();
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>( getApplication(), R.layout.spinner_item, spinnerList );
-        arrayAdapter.setDropDownViewResource( R.layout.spinner_dropdown_item );
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>( getApplicationContext(), android.R.layout.simple_spinner_dropdown_item, spinnerList );
         spinner.setAdapter( arrayAdapter );
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if ( spinner.getSelectedItem().toString().equals( spinnerList.get( 0 ) ) ) {
+                    ( ( TextView ) parent.getChildAt(0 ) ).setTextColor( getResources().getColor( android.R.color.holo_red_dark ) );
+                } else {
+                    ( ( TextView ) parent.getChildAt(0 ) ).setTextColor( getResources().getColor( R.color.colorAccent ) );
+                }
+
+                statusSelection = spinner.getSelectedItem().toString();
+                Toast.makeText( getApplicationContext(), spinner.getSelectedItem().toString(), Toast.LENGTH_SHORT ).show();
+//                selection = spinner.getSelectedItem().toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void myObjects() {
@@ -145,10 +174,10 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
 
     private void takePicture() {
         Intent photo = new Intent( MediaStore.ACTION_IMAGE_CAPTURE );
-        String filepath = "file:///sdcard/";
-        imageName = String.format( "%s%s%s", "BM&C_", new SimpleDateFormat("ddMMyyhhmmss").format( new Date() ), ".jpg" );
-        Uri uri = Uri.parse( filepath + imageName );
-        photo.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
+//        String filepath = "file:///sdcard/";
+//        imageName = String.format( "%s%s%s", "BM&C_", new SimpleDateFormat("ddMMyyhhmmss").format( new Date() ), ".jpg" );
+//        Uri uri = Uri.parse( filepath + imageName );
+//        photo.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult( photo, 0 );
     }
 
@@ -157,23 +186,25 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         super.onActivityResult( requestCode, resultCode, data );
         if ( resultCode == RESULT_OK ) {
             try {
-                file = new File( Environment.getExternalStorageDirectory().getPath(), imageName );
-                Uri uri = Uri.fromFile( file );
-                bitmap = MediaStore.Images.Media.getBitmap( this.getContentResolver(), uri );
+//                file = new File( Environment.getExternalStorageDirectory().getPath(), imageName );
+//                Uri uri = Uri.fromFile( file );
+//                uri = data.getData();
+//                bitmap = MediaStore.Images.Media.getBitmap( this.getContentResolver(), uri );
+                bitmap = ( Bitmap ) data.getExtras().get( "data" );
 
-                ExifInterface exif = new ExifInterface( uri.getPath() );
-                int orientation = exif.getAttributeInt( ExifInterface.TAG_ORIENTATION, 1 );
-                Matrix matrix = new Matrix();
-
-                if ( orientation == 6 ) {
-                    matrix.postRotate( 90 );
-                } else if ( orientation == 3 ) {
-                    matrix.postRotate( 180 );
-                } else if ( orientation == 8 ) {
-                    matrix.postRotate( 270 );
-                }
-
-                bitmap = Bitmap.createBitmap( bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true );
+//                ExifInterface exif = new ExifInterface( uri.getPath() );
+//                int orientation = exif.getAttributeInt( ExifInterface.TAG_ORIENTATION, 1 );
+//                Matrix matrix = new Matrix();
+//
+//                if ( orientation == 6 ) {
+//                    matrix.postRotate( 90 );
+//                } else if ( orientation == 3 ) {
+//                    matrix.postRotate( 180 );
+//                } else if ( orientation == 8 ) {
+//                    matrix.postRotate( 270 );
+//                }
+//
+//                bitmap = Bitmap.createBitmap( bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true );
                 imageView.setImageBitmap( bitmap );
                 MediaStore.Images.Media.insertImage( getContentResolver(), bitmap, imageName, null );
 
@@ -187,26 +218,34 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     }
 
     private void attemptUpload() {
-//        if ( mUp != null ) {
-//            return;
-//        }
-//
-//        mUp = new UploadTask( user, building, date.getText().toString(), finding.getText().toString(), description.getText().toString(), bitmap );
-//        mUp.execute( ( Void ) null );
-        ComplianceInspection inspection = new ComplianceInspection( building.getBuildingID(),
-                date.getText().toString(), finding.getText().toString(),
-                //TODO get inspection status from spinner
-                description.getText().toString(), "Open", encodeImage(),
-                user.getName(), date.getText().toString(), user.getName(),
-                date.getText().toString(), "Open" );
 
-        new Firebase_Helper().addComplianceInspection(inspection, new Firebase_Helper.DataStatus() {
-            @Override
-            public void dataIsInserted() {
-                Snackbar.make( findViewById( R.id.date ), "Compliance inspection uploaded.", Snackbar.LENGTH_LONG )
-                        .setAction( "Action", null ).show();
-            }
-        });
+        if ( finding.getText().toString().trim().isEmpty() ) {
+            finding.setError( getString( R.string.error_field_required ) );
+            finding.requestFocus();
+        } else if ( description.getText().toString().trim().isEmpty() ) {
+            description.setError( getString( R.string.error_field_required ) );
+            description.requestFocus();
+        } else if ( statusSelection.equals( spinnerList.get( 0 ) ) ) {
+            TextView errorText = ( TextView ) spinner.getSelectedView();
+            errorText.setError( getString( R.string.error_selection_required ) );
+            errorText.requestFocus();
+        } else {
+            showProgress(true);
+            ComplianceInspection inspection = new ComplianceInspection(building.getBuildingID(),
+                    date.getText().toString(), finding.getText().toString(),
+                    description.getText().toString(), statusSelection, encodeImage(),
+                    user.getName(), new Date().toString(), user.getName(),
+                    new Date().toString(), "Open");
+
+            new Firebase_Helper().addComplianceInspection(inspection, new Firebase_Helper.DataStatus() {
+                @Override
+                public void dataIsInserted() {
+                    showProgress(false);
+                    Toast.makeText(getApplicationContext(), "Compliance Inspection upload successful.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            });
+        }
     }
 
     private String encodeImage() {
@@ -214,6 +253,39 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         bitmap.compress( Bitmap.CompressFormat.JPEG, 100, outputStream );
         String encodedImage = Base64.encodeToString( outputStream.toByteArray(), Base64.DEFAULT );
         return encodedImage;
+    }
+
+    @TargetApi( Build.VERSION_CODES.HONEYCOMB_MR2 )
+    private void showProgress( final boolean show ) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2 ) {
+            int shortAnimTime = getResources().getInteger( android.R.integer.config_shortAnimTime );
+
+            mUpCIFormView.setVisibility( show ? View.GONE : View.VISIBLE );
+            mUpCIFormView.animate().setDuration( shortAnimTime ).alpha(
+                    show ? 0 : 1 ).setListener( new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd( Animator animation ) {
+                    mUpCIFormView.setVisibility( show ? View.GONE : View.VISIBLE );
+                }
+            } );
+
+            mProgressView.setVisibility( show ? View.VISIBLE : View.GONE );
+            mProgressView.animate().setDuration( shortAnimTime ).alpha(
+                    show ? 1 : 0 ).setListener( new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd( Animator animation ) {
+                    mProgressView.setVisibility( show ? View.VISIBLE : View.GONE );
+                }
+            } );
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            mProgressView.setVisibility( show ? View.VISIBLE : View.GONE );
+            mUpCIFormView.setVisibility( show ? View.GONE : View.VISIBLE );
+        }
     }
 
     @Override

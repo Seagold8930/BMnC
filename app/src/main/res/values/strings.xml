@@ -35,5 +35,6 @@
     <string name="error_invalid_password">Invalid password. Please have: At least one lowercase letter, at least one uppercase letter, and one digit</string>
 
     <string name="title_activity_main">MainActivity</string>
+    <string name="error_selection_required">Please select Compliance Inspection Status</string>
 
 </resources>
