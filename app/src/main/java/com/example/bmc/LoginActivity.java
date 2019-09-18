@@ -6,7 +6,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.StrictMode;
 
 import com.example.bmc.db.DB_Handler;
 import com.google.android.material.snackbar.Snackbar;
@@ -24,7 +23,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,11 +39,6 @@ import com.example.bmc.auxiliary.User;
 import com.example.bmc.auxiliary.UserCredentials;
 import com.example.bmc.validate.Validate;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,10 +74,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView = findViewById( R.id.password );
 
         //TODO remove after testing
-        mUsernameView.setText( "Jane.Smith001" );
-        mPasswordView.setText( "MyPass1000" );
-//        mUsernameView.setText( "john.doe001" );
-//        mPasswordView.setText( "John.Doe001" );
+//        mUsernameView.setText( "Jane.Smith001" );
+//        mPasswordView.setText( "MyPass1000" );
+        mUsernameView.setText( "john.doe001" );
+        mPasswordView.setText( "John.Doe001" );
 
         mPasswordView.setOnEditorActionListener( new TextView.OnEditorActionListener() {
             @Override

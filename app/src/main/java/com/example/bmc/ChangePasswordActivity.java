@@ -7,7 +7,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
+
+import com.example.bmc.db.DB_Handler;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -21,10 +22,6 @@ import com.example.bmc.auxiliary.Building;
 import com.example.bmc.auxiliary.User;
 import com.example.bmc.validate.Validate;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ChangePasswordActivity extends AppCompatActivity {
@@ -177,70 +174,15 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            Connection conn = getConnection();
+            DB_Handler handler = new DB_Handler();
 
-            if( conn == null ) {
+            if( handler.getConnection() == null ) {
                 Log.d( "AsyncTask", "Null connection" );
-                Snackbar.make( findViewById( R.id.cancel_button ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
+                Snackbar.make( findViewById( R.id.password_one ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
                         .setAction( "Action", null ).show();
                 return false;
-            } else {
-                Log.v( "Connection: ", "Success" );
-                PreparedStatement statement = null;
-
-                try {
-                    conn.setAutoCommit( false );
-                    statement = conn.prepareStatement( "UPDATE [User] SET [password] = ? WHERE " +
-                            "lower( [userID] ) = ?" );
-                    statement.setString( 1, newPass );
-                    statement.setString( 2, user.getUsername().toLowerCase() );
-
-                    statement.execute();
-                    conn.commit();
-
-                    return true;
-                } catch ( SQLException e ) {
-                    e.printStackTrace();
-                    try {
-                        conn.rollback();
-                        conn.setAutoCommit( true );
-                    } catch ( SQLException e1 ) {
-                        e1.printStackTrace();
-                    }
-                } finally {
-                    try {
-                        statement.close();
-                        conn.setAutoCommit( true );
-                        conn.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        public Connection getConnection() {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy( policy );
-
-            String connectionString = "jdbc:jtds:sqlserver://bmcs.database.windows.net:1433/BMnC;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;";
-            String username = "bmcs_admin";
-            String password = "Weltec2019";
-
-            try {
-                Class.forName( "net.sourceforge.jtds.jdbc.Driver" );
-                return DriverManager.getConnection( connectionString, username, password );
-            } catch ( ClassNotFoundException e ) {
-                e.printStackTrace();
-            } catch ( SQLException e ) {
-                e.printStackTrace();
-                Snackbar.make( findViewById( R.id.username ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
-                        .setAction( "Action", null ).show();
-            }
-
-            return null;
+            } else
+                return handler.updatePassword( newPass, user );
         }
 
         @Override
@@ -254,6 +196,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 intent.putExtra( "Buildings", buildings );
                 finish();
                 startActivity( intent );
+            } else {
+                Snackbar.make( findViewById( R.id.password_one ), "Error updating the password. Check your connection and try again.", Snackbar.LENGTH_LONG )
+                        .setAction( "Action", null ).show();
             }
         }
     }
