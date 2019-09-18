@@ -35,7 +35,7 @@ public class DB_Handler implements Serializable {
     private Connection conn = null;
     private PreparedStatement statement;
     private ResultSet set;
-    private List<Building> buildings = new ArrayList<>();
+    private ArrayList<Building> buildings = new ArrayList<>();
 
     public DB_Handler() {
 
@@ -53,6 +53,10 @@ public class DB_Handler implements Serializable {
         } catch ( Exception e ) {
             e.printStackTrace();
         }
+    }
+
+    public Connection getConnection() {
+        return this.conn;
     }
 
     public User login( String username, String password ) {
@@ -121,7 +125,7 @@ public class DB_Handler implements Serializable {
         return false;
     }
 
-    public List<Building> getBuildingName( User user ) {
+    public ArrayList<Building> getBuildingName( User user ) {
         List<String> buildingIDs = new ArrayList<>();
 
         try {

@@ -7,6 +7,8 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.StrictMode;
+
+import com.example.bmc.db.DB_Handler;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -175,6 +177,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress( true );
 //            mAuthTask = new UserLoginTask( username, password );
             mAuthTask = new UserLoginTask( userCredentials.getUsername(), userCredentials.getPassword(), loginSuccess );
+            userCredentials = null;
             mAuthTask.execute( ( Void ) null );
         }
     }
@@ -298,7 +301,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     /**
-     * Represents an asynchronous login/registration task used to authenticate
+     * Represents an asynchronous login task used to authenticate
      * the user.
      */
     public class UserLoginTask extends AsyncTask< Void, Void, Boolean > {
@@ -314,138 +317,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground( Void... params ) {
-            // TODO: attempt authentication against a network service.
-//
-//            try {
-//                // Simulate network access.
-//                Thread.sleep(2000);
-//            } catch ( InterruptedException e ) {
-//                return false;
-//            }
-//
-//            for ( String credential : DUMMY_CREDENTIALS ) {
-//                String[] pieces = credential.split( ":" );
-//                if (pieces[ 0 ].equals( mUsername ) ) {
-//                    // Account exists, return true if the password matches.
-//                    return pieces[ 1 ].equals( mPassword );
-//                }
-//            }
-//
-//            // TODO: register the new account here.
-//            return true;
+            DB_Handler handler = new DB_Handler();
+            loginSuccess = false;
 
-//            user = new DB_Handler().login( mUsername, mPassword );
-//            return user.getUsername().equalsIgnoreCase( mUsername );
-
-
-
-
-
-
-            Connection conn = getConnection();
-
-            if( conn == null ) {
-                Log.d( "AsyncTask", "Null connection" );
+            if( handler.getConnection() == null ) {
                 Snackbar.make( findViewById( R.id.username ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
                         .setAction( "Action", null ).show();
-                return loginSuccess;
+                return false;
             } else {
-                loginSuccess = false;
+                user = handler.login( mUsername, mPassword );
 
-                try {
-                    PreparedStatement statement = conn.prepareStatement( "SELECT * FROM [User] WHERE [userID] = ?" );
-                    statement.setString( 1, userCredentials.getUsername() );
-                    ResultSet set = statement.executeQuery();
-
-                    while ( set.next() ) {
-                        UserCredentials db_credentials = new UserCredentials( set.getString( "userID" ), set.getString( "password" ) );
-
-                        if( db_credentials.getUsername().equalsIgnoreCase( userCredentials.getUsername() ) && db_credentials.getPassword().equals( userCredentials.getPassword() ) ) {
-                            user = new User( set.getString( "name" ), set.getString( "userID" ) );
-                            loginSuccess = true;
-                        }
-                    }
-
-                    if (loginSuccess)
-                        getBuildingList( conn, statement, set );
-
-                    userCredentials = null;
-                    set.close();
-                    statement.close();
-                    conn.close();
-
+                if (user == null) {
+                    loginSuccess = false;
                     return true;
-                } catch ( SQLException e ) {
-                    e.printStackTrace();
-                    Snackbar.make( findViewById( R.id.contents ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
-                            .setAction( "Action", null ).show();
-                    return loginSuccess;
+                } else {
+                    handler = new DB_Handler();
+                    buildings = handler.getBuildingName( user );
+                    loginSuccess = true;
+                    return true;
                 }
             }
-        }
-
-        public Connection getConnection() {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy( policy );
-
-            String connectionString = "jdbc:jtds:sqlserver://bmcs.database.windows.net:1433/BMnC;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;";
-//            String connectionString = "jdbc:sqlserver://bmcs.database.windows.net:1433;database=BMnC;encrypt=true;sslProtocol=TLSv1.1;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
-
-//            String connectionString = "jdbc:sqlserver://bmcs.database.windows.net:1433;database=BMnC;sslProtocol=TLSv1.1;encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
-            String username = "bmcs_admin";
-            String password = "Weltec2019";
-
-            try {
-//                Class.forName( "com.microsoft.sqlserver.jdbc.SQLServerDriver" );
-                Class.forName( "net.sourceforge.jtds.jdbc.Driver" );
-                return DriverManager.getConnection( connectionString, username, password );
-            } catch ( ClassNotFoundException e ) {
-                e.printStackTrace();
-            } catch ( SQLException e ) {
-                e.printStackTrace();
-                Snackbar.make( findViewById( R.id.username ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
-                        .setAction( "Action", null ).show();
-                loginSuccess = false;
-            }
-
-            return null;
-        }
-
-        private void getBuildingList(Connection conn, PreparedStatement statement, ResultSet set) throws SQLException {
-            List<String> buildingIDs = new ArrayList<>();
-
-            statement = conn.prepareStatement( "SELECT * FROM [User_Building] WHERE " +
-                    "lower( [userID] ) = ?" );
-            statement.setString( 1, user.getUsername().toLowerCase() );
-
-            set = statement.executeQuery();
-
-            while ( set.next() ) {
-                buildingIDs.add( set.getString( "buildingID" ) );
-            }
-
-            buildings = new ArrayList<>();
-
-            for ( String id : buildingIDs ) {
-                statement = conn.prepareStatement( "SELECT * FROM [Building_Header] " +
-                        "WHERE [buildingID] = ?" );
-                statement.setString( 1, id );
-                set = statement.executeQuery();
-
-                while ( set.next() ) {
-                    addBuildingToList( new Building( set.getInt( "buildingID" ),
-                            set.getString( "buildingName" ),
-                            set.getString( "address" ),
-                            set.getString( "location" ),
-                            set.getInt( "yearBuilt" ) ) );
-                }
-            }
-
-
-        }
-
-        private void addBuildingToList( Building building ) {
-            buildings.add( building );
         }
 
         @Override
@@ -466,8 +357,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     intent.putExtra( "Buildings", buildings );
                     startActivity( intent );
                 }
-            } else {
+            } else if ( success && ! loginSuccess ) {
                 Snackbar.make( findViewById( R.id.username ), "Login failed. Check your credentials.", Snackbar.LENGTH_LONG )
+                        .setAction( "Action", null ).show();
+            } else {
+                Snackbar.make( findViewById( R.id.username ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
                         .setAction( "Action", null ).show();
             }
         }
