@@ -5,7 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -32,9 +34,9 @@ import android.widget.Toast;
 import com.example.bmc.auxiliary.Building;
 import com.example.bmc.auxiliary.ComplianceInspection;
 import com.example.bmc.auxiliary.User;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,15 +51,14 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     private Spinner spinner;
     private List<String> spinnerList;
     private String statusSelection;
-    private File file;
     private User user;
     private Building building;
     private String imageName;
     private ImageView imageView;
-    private static Uri uri;
     private static Bitmap bitmap;
     private View mUpCIFormView;
     private View mProgressView;
+    private InsertTask mIn;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -92,10 +93,6 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         fabSubmit.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick( View view ) {
-//                DB_Handler handler = new DB_Handler();
-//                ComplianceInspection inspection = new ComplianceInspection( 1, null, null, null, null, new ComplianceImage( file ) );
-//                User user = new User( "John Doe", "John.Doe001" );
-//                handler.uploadComplianceInspection( inspection, user );
                 attemptUpload();
             }
         } );
@@ -223,6 +220,12 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
             errorText.setError( getString( R.string.error_selection_required ) );
             errorText.requestFocus();
         } else {
+            startUploadTask();
+        }
+    }
+
+    private void startUploadTask() {
+        if ( isDeviceConnected() ) {
             showProgress( true );
             ComplianceInspection inspection = new ComplianceInspection(building.getBuildingID(),
                     date.getText().toString(), finding.getText().toString(),
@@ -230,15 +233,24 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
                     user.getName(), new Date().toString(), user.getName(),
                     new Date().toString(), "Open");
 
-            new Firebase_Helper().addComplianceInspection( inspection, new Firebase_Helper.DataStatus() {
-                @Override
-                public void dataIsInserted() {
-                    showProgress( false );
-                    Toast.makeText(getApplicationContext(), "Compliance Inspection upload successful.", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-            } );
+            mIn = new InsertTask( inspection );
+            mIn.execute( ( Void ) null );
+        } else {
+            Snackbar.make( findViewById( R.id.finding_input ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
+                    .setAction( "Action", null ).show();
         }
+
+    }
+
+    private boolean isDeviceConnected() {
+        ConnectivityManager manager = (ConnectivityManager) this.getSystemService( this.CONNECTIVITY_SERVICE );
+        NetworkInfo info = manager.getActiveNetworkInfo();
+
+        if ( info != null && info.isConnected() ) {
+            return true;
+        }
+
+        return false;
     }
 
     private String encodeImage() {
@@ -281,6 +293,42 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         }
     }
 
+    public class InsertTask extends AsyncTask< Void, Void, Boolean > {
+        ComplianceInspection inspection;
+
+        public InsertTask( ComplianceInspection inspection ) {
+            this.inspection = inspection;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            Firebase_Helper helper = new Firebase_Helper();
+
+            try {
+                helper.addComplianceInspection( inspection, new Firebase_Helper.DataStatus() {
+                    @Override
+                    public void dataIsInserted() {
+                    }
+                });
+
+                return true;
+            } catch ( Exception e ) {
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute( final Boolean success ) {
+            mIn = null;
+            showProgress( false );
+
+            if ( success ) {
+                Toast.makeText(getApplicationContext(), "Compliance Inspection upload successful.", Toast.LENGTH_SHORT).show();
+                    finish();
+            }
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu( Menu menu ) {
         MenuInflater inflater = getMenuInflater();
@@ -311,7 +359,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     private void openDashboard() {
         Intent intent = new Intent( getApplicationContext(), DashboardActivity.class );
         Bundle bundle = getIntent().getExtras();
-        ArrayList<Building> buildings = new ArrayList<>();
+        ArrayList<Building> buildings;
         buildings = ( ArrayList< Building > )bundle.getSerializable( "Buildings" );
         user = ( User )bundle.getSerializable( "User" );
         intent.putExtra( "Buildings", buildings );
