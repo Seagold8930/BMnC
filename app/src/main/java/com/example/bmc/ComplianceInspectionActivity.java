@@ -1,3 +1,17 @@
+//**************************************************************************************************
+// Copyright <2019> <DAN MOTA>
+//
+// Permission to use, copy, modify, and/or distribute this software for any purpose with or without
+// fee is hereby granted, provided that the above copyright notice and this permission notice appear
+// in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+// SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+// AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+// NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+// OF THIS SOFTWARE.
+//**************************************************************************************************
 package com.example.bmc;
 
 import android.animation.Animator;
@@ -129,15 +143,18 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         spinner = findViewById( R.id.status );
         populateList();
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>( this, android.R.layout.simple_list_item_1, spinnerList );
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>( this, android.R.layout.
+                simple_list_item_1, spinnerList );
         spinner.setAdapter( arrayAdapter );
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if ( spinner.getSelectedItem().toString().equals( spinnerList.get( 0 ) ) ) {
-                    ( ( TextView ) parent.getChildAt(0 ) ).setTextColor( getResources().getColor( android.R.color.holo_red_dark ) );
+                    ( ( TextView ) parent.getChildAt(0 ) ).setTextColor( getResources().
+                            getColor( android.R.color.holo_red_dark ) );
                 } else {
-                    ( ( TextView ) parent.getChildAt(0 ) ).setTextColor( getResources().getColor( R.color.colorAccent ) );
+                    ( ( TextView ) parent.getChildAt(0 ) ).setTextColor( getResources().
+                            getColor( R.color.colorAccent ) );
                 }
 
                 statusSelection = spinner.getSelectedItem().toString();
@@ -165,7 +182,8 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     private void takePicture() {
         Intent photo = new Intent( MediaStore.ACTION_IMAGE_CAPTURE );
 //        String filepath = "file:///sdcard/";
-        imageName = String.format( "%s%s%s", "BM&C_", new SimpleDateFormat("ddMMyyhhmmss").format( new Date() ), ".jpg" );
+        imageName = String.format( "%s%s%s", "BM&C_", new SimpleDateFormat("ddMMyyhhmmss").
+                format( new Date() ), ".jpg" );
 //        Uri uri = Uri.parse( filepath + imageName );
 //        photo.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult( photo, 0 );
@@ -196,7 +214,8 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
 //
 //                bitmap = Bitmap.createBitmap( bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true );
                 imageView.setImageBitmap( bitmap );
-                MediaStore.Images.Media.insertImage( getContentResolver(), bitmap, imageName, null );
+                MediaStore.Images.Media.insertImage( getContentResolver(), bitmap, imageName,
+                        null );
 
             } catch ( Exception e ) {
                 e.printStackTrace();
@@ -236,14 +255,16 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
             mIn = new InsertTask( inspection );
             mIn.execute( ( Void ) null );
         } else {
-            Snackbar.make( findViewById( R.id.finding_input ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
+            Snackbar.make( findViewById( R.id.finding_input ), "Connection failed. Check " +
+                    "your network access.", Snackbar.LENGTH_LONG )
                     .setAction( "Action", null ).show();
         }
 
     }
 
     private boolean isDeviceConnected() {
-        ConnectivityManager manager = (ConnectivityManager) this.getSystemService( this.CONNECTIVITY_SERVICE );
+        ConnectivityManager manager = (ConnectivityManager) this.
+                getSystemService( CONNECTIVITY_SERVICE );
         NetworkInfo info = manager.getActiveNetworkInfo();
 
         if ( info != null && info.isConnected() ) {
@@ -256,8 +277,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     private String encodeImage() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         bitmap.compress( Bitmap.CompressFormat.JPEG, 100, outputStream );
-        String encodedImage = Base64.encodeToString( outputStream.toByteArray(), Base64.DEFAULT );
-        return encodedImage;
+        return Base64.encodeToString( outputStream.toByteArray(), Base64.DEFAULT );
     }
 
     @TargetApi( Build.VERSION_CODES.HONEYCOMB_MR2 )
@@ -323,7 +343,8 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
             showProgress( false );
 
             if ( success ) {
-                Toast.makeText(getApplicationContext(), "Compliance Inspection upload successful.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Compliance Inspection upload " +
+                        "successful.", Toast.LENGTH_SHORT).show();
                     finish();
             }
         }

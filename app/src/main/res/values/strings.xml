@@ -3,6 +3,7 @@
     <!-- Strings related to login -->
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
+    <string name="remember_me">Remember me</string>
     <string name="action_sign_in">Login</string>
     <string name="action_sign_in_short">Login</string>
     <string name="error_invalid_login">This username is invalid</string>

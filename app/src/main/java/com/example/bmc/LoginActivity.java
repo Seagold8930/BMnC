@@ -1,3 +1,17 @@
+//**************************************************************************************************
+// Copyright <2019> <DAN MOTA>
+//
+// Permission to use, copy, modify, and/or distribute this software for any purpose with or without
+// fee is hereby granted, provided that the above copyright notice and this permission notice appear
+// in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+// SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+// AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+// NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+// OF THIS SOFTWARE.
+//**************************************************************************************************
 package com.example.bmc;
 
 import android.Manifest;
@@ -5,6 +19,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
 import com.example.bmc.db.DB_Handler;
@@ -30,6 +45,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +77,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private CheckBox mCheckRemember;
+    private SharedPreferences mSharedPref;
+    private static final String PREFERENCES_CRED = "PrefsFile";
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -68,14 +87,38 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView( R.layout.activity_login );
 
         checkPermissions();
+        createActivity();
+        getPreferencesData();
+    }
 
+    private void checkPermissions() {
+        if ( ContextCompat.checkSelfPermission( getApplicationContext(),
+                Manifest.permission.CAMERA ) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission( getApplicationContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission( getApplicationContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ) {
+
+            requestPermission();
+        }
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions( this,
+                new String[]{ Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE },
+                PERMISSION_REQUEST_CODE );
+    }
+
+    private void createActivity() {
         // Set up the login form.
+        mSharedPref = getSharedPreferences( PREFERENCES_CRED, MODE_PRIVATE );
         mUsernameView = findViewById( R.id.username );
         mPasswordView = findViewById( R.id.password );
 
         //TODO remove after testing
-        mUsernameView.setText( "Jane.Smith001" );
-        mPasswordView.setText( "MyPass1000" );
+//        mUsernameView.setText( "Jane.Smith001" );
+//        mPasswordView.setText( "MyPass1000" );
 //        mUsernameView.setText( "john.doe001" );
 //        mPasswordView.setText( "John.Doe001" );
 
@@ -94,31 +137,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mSignInButton.setOnClickListener( new OnClickListener() {
             @Override
             public void onClick( View view ) {
-                userCredentials = new UserCredentials( mUsernameView.getText().toString(), mPasswordView.getText().toString() );
+                userCredentials = new UserCredentials( mUsernameView.getText().toString(),
+                        mPasswordView.getText().toString() );
                 attemptLogin();
             }
         } );
 
         mLoginFormView = findViewById( R.id.login_form );
         mProgressView = findViewById( R.id.login_progress );
+        mCheckRemember = findViewById( R.id.remember_me );
     }
 
-    private void checkPermissions() {
-        if ( ContextCompat.checkSelfPermission( getApplicationContext(),
-                Manifest.permission.CAMERA ) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission( getApplicationContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission( getApplicationContext(),
-                Manifest.permission.READ_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ) {
-
-            requestPermission();
+    private void getPreferencesData() {
+        SharedPreferences preferences = getSharedPreferences( PREFERENCES_CRED, MODE_PRIVATE );
+        if ( preferences.contains( "username" ) && preferences.contains( "password" ) &&
+            preferences.contains( "checkbox" ) ) {
+            mUsernameView.setText( preferences.getString( "username", "Preference not found" ) );
+            mPasswordView.setText( preferences.getString( "password", "Preference not found" ) );
+            mCheckRemember.setChecked( preferences.getBoolean( "checkbox", false ) );
         }
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions( this,
-                new String[]{ Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE },
-                PERMISSION_REQUEST_CODE );
     }
 
     /**
@@ -130,6 +167,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if ( mAuthTask != null ) {
             return;
         }
+
+        checkRememberMe();
 
         // Reset errors.
         mUsernameView.setError( null );
@@ -148,7 +187,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         if ( userErrorCode == -1 || passErrorCode == -1 ) {
             focusView = mUsernameView;
-            Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ), Toast.LENGTH_SHORT ).show();
+            Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ),
+                    Toast.LENGTH_SHORT ).show();
             cancel = true;
         } else if ( userErrorCode != 0 ) {
             mUsernameView.setError( getErrorMessage( userErrorCode ) );
@@ -168,9 +208,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress( true );
-            mAuthTask = new UserLoginTask( userCredentials.getUsername(), userCredentials.getPassword(), loginSuccess );
+            mAuthTask = new UserLoginTask( userCredentials.getUsername(),
+                    userCredentials.getPassword(), loginSuccess );
             userCredentials = null;
             mAuthTask.execute( ( Void ) null );
+        }
+    }
+
+    private void checkRememberMe() {
+        if ( mCheckRemember.isChecked() ) {
+            SharedPreferences.Editor editor = mSharedPref.edit();
+            editor.putString( "username", mUsernameView.getText().toString() );
+            editor.putString( "password", mPasswordView.getText().toString() );
+            editor.putBoolean( "checkbox", mCheckRemember.isChecked() );
+            editor.apply();
+        } else {
+            mSharedPref.edit().clear().apply();
         }
     }
 
@@ -185,21 +238,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             case 1 :
                 return getString( R.string.error_pattern_mismatch );
             default:
-                Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ), Toast.LENGTH_SHORT ).show();
+                Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ),
+                        Toast.LENGTH_SHORT ).show();
                 break;
         }
 
         return null;
-    }
-
-    private boolean isUsernameValid( String username ) {
-        //TODO: Replace this with your own logic
-        return true;
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
     }
 
     /**
@@ -313,7 +357,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             loginSuccess = false;
 
             if( handler.getConnection() == null ) {
-                Snackbar.make( findViewById( R.id.username ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
+                Snackbar.make( findViewById( R.id.username ), "Connection failed. Check your" +
+                        " network access.", Snackbar.LENGTH_LONG )
                         .setAction( "Action", null ).show();
                 return false;
             } else {
@@ -338,7 +383,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             if ( success && loginSuccess ) {
                 if( mUsername.toLowerCase().equals( mPassword.toLowerCase() ) ) {
-                    Intent intent = new Intent( getApplicationContext(), ChangePasswordActivity.class );
+                    Intent intent = new Intent( getApplicationContext(),
+                            ChangePasswordActivity.class );
                     intent.putExtra( "User", user );
                     intent.putExtra( "Buildings", buildings );
                     intent.putExtra( "Default Password", mPassword );
@@ -350,10 +396,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     startActivity( intent );
                 }
             } else if ( success && ! loginSuccess ) {
-                Snackbar.make( findViewById( R.id.username ), "Login failed. Check your credentials.", Snackbar.LENGTH_LONG )
+                Snackbar.make( findViewById( R.id.username ), "Login failed. Check your " +
+                        "credentials.", Snackbar.LENGTH_LONG )
                         .setAction( "Action", null ).show();
             } else {
-                Snackbar.make( findViewById( R.id.username ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
+                Snackbar.make( findViewById( R.id.username ), "Connection failed. Check your" +
+                        " network access.", Snackbar.LENGTH_LONG )
                         .setAction( "Action", null ).show();
             }
         }

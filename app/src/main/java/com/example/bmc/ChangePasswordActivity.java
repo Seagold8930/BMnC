@@ -1,9 +1,24 @@
+//**************************************************************************************************
+// Copyright <2019> <DAN MOTA>
+//
+// Permission to use, copy, modify, and/or distribute this software for any purpose with or without
+// fee is hereby granted, provided that the above copyright notice and this permission notice appear
+// in all copies.
+//
+// THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+// SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+// AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+// NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+// OF THIS SOFTWARE.
+//**************************************************************************************************
 package com.example.bmc;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,6 +51,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private ArrayList<Building> buildings = new ArrayList<>();
     private View mProgressView;
     private View mChangePassFormView;
+    private static final String PREFERENCES_CRED = "PrefsFile";
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -54,8 +70,14 @@ public class ChangePasswordActivity extends AppCompatActivity {
         mConfirmPass = findViewById( R.id.password_two );
         changePass = findViewById( R.id.change_password_button );
 
-        user = ( User ) getIntent().getExtras().getSerializable( "User" );
-        buildings = ( ArrayList< Building > ) getIntent().getExtras().getSerializable( "Buildings" );
+        try {
+            user = ( User ) getIntent().getExtras().getSerializable( "User" );
+            buildings = ( ArrayList< Building > ) getIntent().getExtras().
+                    getSerializable( "Buildings" );
+        } catch ( NullPointerException e ) {
+            user = null;
+            buildings = null;
+        }
 
         changePass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +108,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
             if( newPassErrorCode == -1 || confirmPassErrorCode == -1 ) {
                 focusView = mNewPass;
-                Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ), Toast.LENGTH_SHORT ).show();
+                Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ),
+                        Toast.LENGTH_SHORT ).show();
                 cancel = true;
             } else if ( newPassErrorCode != 0 ) {
                 mNewPass.setError( getErrorCode( newPassErrorCode ) );
@@ -124,7 +147,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
             case 1 :
                 return getString( R.string.error_invalid_password );
             default:
-                Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ), Toast.LENGTH_SHORT ).show();
+                Toast.makeText( getApplicationContext(), getString( R.string.unexpected_error ),
+                        Toast.LENGTH_SHORT ).show();
                 break;
         }
         return null;
@@ -178,7 +202,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
             if( handler.getConnection() == null ) {
                 Log.d( "AsyncTask", "Null connection" );
-                Snackbar.make( findViewById( R.id.password_one ), "Connection failed. Check your network access.", Snackbar.LENGTH_LONG )
+                Snackbar.make( findViewById( R.id.password_one ), "Connection failed. Check " +
+                        "your network access.", Snackbar.LENGTH_LONG )
                         .setAction( "Action", null ).show();
                 return false;
             } else
@@ -191,13 +216,22 @@ public class ChangePasswordActivity extends AppCompatActivity {
             showProgress( false );
 
             if ( success ) {
+                SharedPreferences preferences = getSharedPreferences( PREFERENCES_CRED, MODE_PRIVATE );
+                preferences.edit().clear().apply();
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString( "username", user.getUsername() );
+                editor.putString( "password", newPass );
+                editor.putBoolean( "checkbox", true );
+                editor.apply();
+
                 Intent intent = new Intent( getApplicationContext(), DashboardActivity.class );
                 intent.putExtra( "User", user );
                 intent.putExtra( "Buildings", buildings );
                 finish();
                 startActivity( intent );
             } else {
-                Snackbar.make( findViewById( R.id.password_one ), "Error updating the password. Check your connection and try again.", Snackbar.LENGTH_LONG )
+                Snackbar.make( findViewById( R.id.password_one ), "Error updating the " +
+                        "password. Check your connection and try again.", Snackbar.LENGTH_LONG )
                         .setAction( "Action", null ).show();
             }
         }
