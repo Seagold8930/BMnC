@@ -18,12 +18,15 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
 import com.example.bmc.db.DB_Handler;
 import com.google.android.material.snackbar.Snackbar;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
@@ -86,12 +89,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_login );
 
-        checkPermissions();
+        if ( ! checkPermissions() ) {
+            requestPermission();
+        }
+
         createActivity();
         getPreferencesData();
     }
 
-    private void checkPermissions() {
+    private boolean checkPermissions() {
         if ( ContextCompat.checkSelfPermission( getApplicationContext(),
                 Manifest.permission.CAMERA ) != PackageManager.PERMISSION_GRANTED ||
             ContextCompat.checkSelfPermission( getApplicationContext(),
@@ -99,8 +105,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             ContextCompat.checkSelfPermission( getApplicationContext(),
                 Manifest.permission.READ_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ) {
 
-            requestPermission();
+            return false;
         }
+        return true;
     }
 
     private void requestPermission() {
@@ -205,13 +212,34 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress( true );
-            mAuthTask = new UserLoginTask( userCredentials.getUsername(),
-                    userCredentials.getPassword(), loginSuccess );
-            userCredentials = null;
-            mAuthTask.execute( ( Void ) null );
+            if ( ! checkPermissions() ) {
+                AlertDialog.Builder builder = new AlertDialog.Builder( LoginActivity.this );
+                builder.setTitle( "Alert" );
+                builder.setMessage("Camera and Storage permissions are required for proper app " +
+                        "functionality.");
+                builder.setCancelable(false);
+
+                builder.setPositiveButton(
+                        "EXIT",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                finish();
+                            }
+                        });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+//            finish();
+            } else {
+                // Show a progress spinner, and kick off a background task to
+                // perform the user login attempt.
+                showProgress( true );
+                mAuthTask = new UserLoginTask( userCredentials.getUsername(),
+                        userCredentials.getPassword(), loginSuccess );
+                userCredentials = null;
+                mAuthTask.execute( ( Void ) null );
+            }
         }
     }
 
