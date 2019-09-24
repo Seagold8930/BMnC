@@ -33,7 +33,7 @@
     <string name="prompt_confirm_password">Confirm password</string>
     <string name="action_change_password">Change Password</string>
     <string name="error_password_mismatch">Password does not match</string>
-    <string name="error_invalid_password">Invalid password. Please have: At least one lowercase letter, at least one uppercase letter, and one digit</string>
+    <string name="error_invalid_password">Invalid password. Please have: At least one lowercase letter, at least one uppercase letter, and at least one digit</string>
 
     <string name="title_activity_main">MainActivity</string>
     <string name="error_selection_required">Please select Compliance Inspection Status</string>

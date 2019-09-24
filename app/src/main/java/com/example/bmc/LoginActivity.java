@@ -144,9 +144,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mSignInButton.setOnClickListener( new OnClickListener() {
             @Override
             public void onClick( View view ) {
-                userCredentials = new UserCredentials( mUsernameView.getText().toString(),
-                        mPasswordView.getText().toString() );
-                attemptLogin();
+                try {
+                    userCredentials = new UserCredentials( mUsernameView.getText().toString(),
+                            mPasswordView.getText().toString() );
+                    attemptLogin();
+                } catch ( NullPointerException e ) {
+                    Snackbar.make( findViewById( R.id.username ), "Error detected. Close the" +
+                            " app and try again.", Snackbar.LENGTH_LONG )
+                            .setAction( "Action", null ).show();
+                }
             }
         } );
 
