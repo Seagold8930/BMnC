@@ -23,7 +23,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class DB_Handler implements Serializable {
@@ -91,10 +93,12 @@ public class DB_Handler implements Serializable {
 
         try {
             conn.setAutoCommit( false );
-            statement = conn.prepareStatement( "UPDATE [User] SET [password] = ? WHERE " +
-                    "lower( [userID] ) = ?" );
+            statement = conn.prepareStatement( "UPDATE [User] SET [password] = ?, " +
+                    "[modifiedBy] = ?, [modifiedDate] = ? WHERE lower( [userID] ) = ?" );
             statement.setString( 1, newPassword );
-            statement.setString( 2, user.getUsername().toLowerCase() );
+            statement.setString( 2, user.getName() );
+            statement.setTimestamp( 3, new Timestamp( Calendar.getInstance().getTimeInMillis() ) );
+            statement.setString( 4, user.getUsername().toLowerCase() );
 
             statement.execute();
             conn.commit();
