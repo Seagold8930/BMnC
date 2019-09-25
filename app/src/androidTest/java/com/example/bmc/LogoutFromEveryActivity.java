@@ -18,7 +18,6 @@ import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
-import androidx.test.rule.GrantPermissionRule;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -43,20 +42,13 @@ import static org.hamcrest.Matchers.is;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class JaneSmithDatabaseDataAssertionWithDashboardNav {
+public class LogoutFromEveryActivity {
 
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
-//    @Rule
-//    public GrantPermissionRule mGrantPermissionRule =
-//            GrantPermissionRule.grant(
-//                    "android.permission.CAMERA",
-//                    "android.permission.READ_EXTERNAL_STORAGE",
-//                    "android.permission.WRITE_EXTERNAL_STORAGE");
-
     @Test
-    public void janeSmithDatabaseDataAssertion() {
+    public void logoutFromEveryActivity() {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
@@ -290,7 +282,7 @@ public class JaneSmithDatabaseDataAssertionWithDashboardNav {
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -317,6 +309,16 @@ public class JaneSmithDatabaseDataAssertionWithDashboardNav {
         imageView2.check(matches(isDisplayed()));
 
         ViewInteraction textView11 = onView(
+                allOf(withId(R.id.list_title), withText("Building Name"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.lv_general_info),
+                                        0),
+                                0),
+                        isDisplayed()));
+        textView11.check(matches(withText("Building Name")));
+
+        ViewInteraction textView12 = onView(
                 allOf(withId(R.id.contents), withText("BM&C Test Building 1 Name"),
                         childAtPosition(
                                 childAtPosition(
@@ -324,9 +326,19 @@ public class JaneSmithDatabaseDataAssertionWithDashboardNav {
                                         0),
                                 1),
                         isDisplayed()));
-        textView11.check(matches(withText("BM&C Test Building 1 Name")));
+        textView12.check(matches(withText("BM&C Test Building 1 Name")));
 
-        ViewInteraction textView12 = onView(
+        ViewInteraction textView13 = onView(
+                allOf(withId(R.id.list_title), withText("Address"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.lv_general_info),
+                                        1),
+                                0),
+                        isDisplayed()));
+        textView13.check(matches(withText("Address")));
+
+        ViewInteraction textView14 = onView(
                 allOf(withId(R.id.contents), withText("BM&C Test Building 1 Address"),
                         childAtPosition(
                                 childAtPosition(
@@ -334,9 +346,19 @@ public class JaneSmithDatabaseDataAssertionWithDashboardNav {
                                         1),
                                 1),
                         isDisplayed()));
-        textView12.check(matches(withText("BM&C Test Building 1 Address")));
+        textView14.check(matches(withText("BM&C Test Building 1 Address")));
 
-        ViewInteraction textView13 = onView(
+        ViewInteraction textView15 = onView(
+                allOf(withId(R.id.list_title), withText("Location"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.lv_general_info),
+                                        2),
+                                0),
+                        isDisplayed()));
+        textView15.check(matches(withText("Location")));
+
+        ViewInteraction textView16 = onView(
                 allOf(withId(R.id.contents), withText("BM&C Test Building 1 Location"),
                         childAtPosition(
                                 childAtPosition(
@@ -344,9 +366,19 @@ public class JaneSmithDatabaseDataAssertionWithDashboardNav {
                                         2),
                                 1),
                         isDisplayed()));
-        textView13.check(matches(withText("BM&C Test Building 1 Location")));
+        textView16.check(matches(withText("BM&C Test Building 1 Location")));
 
-        ViewInteraction textView14 = onView(
+        ViewInteraction textView17 = onView(
+                allOf(withId(R.id.list_title), withText("Year Built"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.lv_general_info),
+                                        3),
+                                0),
+                        isDisplayed()));
+        textView17.check(matches(withText("Year Built")));
+
+        ViewInteraction textView18 = onView(
                 allOf(withId(R.id.contents), withText("1990"),
                         childAtPosition(
                                 childAtPosition(
@@ -354,7 +386,7 @@ public class JaneSmithDatabaseDataAssertionWithDashboardNav {
                                         3),
                                 1),
                         isDisplayed()));
-        textView14.check(matches(withText("1990")));
+        textView18.check(matches(withText("1990")));
 
         ViewInteraction imageButton3 = onView(
                 allOf(withId(R.id.fab),
@@ -365,6 +397,120 @@ public class JaneSmithDatabaseDataAssertionWithDashboardNav {
                                 3),
                         isDisplayed()));
         imageButton3.check(matches(isDisplayed()));
+
+        ViewInteraction floatingActionButton = onView(
+                allOf(withId(R.id.fab),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.content),
+                                        0),
+                                3),
+                        isDisplayed()));
+        floatingActionButton.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction imageButton4 = onView(
+                allOf(withContentDescription("Navigate up"),
+                        childAtPosition(
+                                allOf(withId(R.id.toolbar),
+                                        childAtPosition(
+                                                IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
+                                                0)),
+                                0),
+                        isDisplayed()));
+        imageButton4.check(matches(isDisplayed()));
+
+        ViewInteraction imageView3 = onView(
+                allOf(withContentDescription("More options"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.toolbar),
+                                        2),
+                                0),
+                        isDisplayed()));
+        imageView3.check(matches(isDisplayed()));
+
+        ViewInteraction editText0 = onView(
+                allOf(withId(R.id.date),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.date_input),
+                                        0),
+                                0),
+                        isDisplayed()));
+        editText0.check(matches(isDisplayed()));
+
+        editText2 = onView(
+                allOf(withId(R.id.finding),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.finding_input),
+                                        0),
+                                0),
+                        isDisplayed()));
+        editText2.check(matches(isDisplayed()));
+
+        ViewInteraction editText3 = onView(
+                allOf(withId(R.id.description),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.description_input),
+                                        0),
+                                0),
+                        isDisplayed()));
+        editText3.check(matches(isDisplayed()));
+
+//        ViewInteraction textView19 = onView(
+//                allOf(withId(android.R.id.text1),
+//                        childAtPosition(
+//                                allOf(withId(R.id.status),
+//                                        childAtPosition(
+//                                                withId(R.id.compliance_inspection_form),
+//                                                4)),
+//                                0),
+//                        isDisplayed()));
+//        textView19.check(matches(isDisplayed()));
+
+        ViewInteraction imageView4 = onView(
+                allOf(withId(R.id.compliance_image),
+                        childAtPosition(
+                                allOf(withId(R.id.compliance_inspection_form),
+                                        childAtPosition(
+                                                withId(R.id.compliance_form),
+                                                0)),
+                                5),
+                        isDisplayed()));
+        imageView4.check(matches(isDisplayed()));
+
+        ViewInteraction imageButton5 = onView(
+                allOf(withId(R.id.cancel_button),
+                        childAtPosition(
+                                allOf(withId(R.id.compliance_inspection_form),
+                                        childAtPosition(
+                                                withId(R.id.compliance_form),
+                                                0)),
+                                6),
+                        isDisplayed()));
+        imageButton5.check(matches(isDisplayed()));
+
+        ViewInteraction imageButton6 = onView(
+                allOf(withId(R.id.submit_button),
+                        childAtPosition(
+                                allOf(withId(R.id.compliance_inspection_form),
+                                        childAtPosition(
+                                                withId(R.id.compliance_form),
+                                                0)),
+                                7),
+                        isDisplayed()));
+        imageButton6.check(matches(isDisplayed()));
 
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
@@ -395,7 +541,7 @@ public class JaneSmithDatabaseDataAssertionWithDashboardNav {
         }
 
         ViewInteraction appCompatTextView2 = onView(
-                allOf(withId(R.id.title), withText("Dashboard"),
+                allOf(withId(R.id.title), withText("Logout"),
                         childAtPosition(
                                 childAtPosition(
                                         withId(R.id.content),
@@ -413,1198 +559,50 @@ public class JaneSmithDatabaseDataAssertionWithDashboardNav {
             e.printStackTrace();
         }
 
+        appCompatAutoCompleteTextView = onView(
+                allOf(withId(R.id.username),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("jane.smith001"), closeSoftKeyboard());
 
+        appCompatEditText = onView(
+                allOf(withId(R.id.password),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
 
+        ViewInteraction appCompatButton2 = onView(
+                allOf(withId(R.id.sign_in_button), withText("Login"),
+                        childAtPosition(
+                                allOf(withId(R.id.credentials_login_form),
+                                        childAtPosition(
+                                                withId(R.id.login_form),
+                                                0)),
+                                3)));
+        appCompatButton2.perform(scrollTo(), click());
 
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        //BUILDING 2
-        appCompatTextView = onData(anything())
+        DataInteraction appCompatTextView3 = onData(anything())
                 .inAdapterView(allOf(withId(R.id.lv_building_names),
                         childAtPosition(
                                 withClassName(is("android.widget.LinearLayout")),
                                 1)))
-                .atPosition(1);
-        appCompatTextView.perform(click());
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        imageButton2 = onView(
-                allOf(withContentDescription("Navigate up"),
-                        childAtPosition(
-                                allOf(withId(R.id.toolbar),
-                                        childAtPosition(
-                                                withId(R.id.my_app_bar),
-                                                0)),
-                                0),
-                        isDisplayed()));
-        imageButton2.check(matches(isDisplayed()));
-
-        imageView2 = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        imageView2.check(matches(isDisplayed()));
-
-        textView11 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 2 Name"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        0),
-                                1),
-                        isDisplayed()));
-        textView11.check(matches(withText("BM&C Test Building 2 Name")));
-
-        textView12 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 2 Address"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        1),
-                                1),
-                        isDisplayed()));
-        textView12.check(matches(withText("BM&C Test Building 2 Address")));
-
-        textView13 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 2 Location"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        2),
-                                1),
-                        isDisplayed()));
-        textView13.check(matches(withText("BM&C Test Building 2 Location")));
-
-        textView14 = onView(
-                allOf(withId(R.id.contents), withText("1991"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        3),
-                                1),
-                        isDisplayed()));
-        textView14.check(matches(withText("1991")));
-
-        imageButton3 = onView(
-                allOf(withId(R.id.fab),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                3),
-                        isDisplayed()));
-        imageButton3.check(matches(isDisplayed()));
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        overflowMenuButton = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        overflowMenuButton.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        appCompatTextView2 = onView(
-                allOf(withId(R.id.title), withText("Dashboard"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.content),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatTextView2.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        //BUILDING 3
-        appCompatTextView = onData(anything())
-                .inAdapterView(allOf(withId(R.id.lv_building_names),
-                        childAtPosition(
-                                withClassName(is("android.widget.LinearLayout")),
-                                1)))
-                .atPosition(2);
-        appCompatTextView.perform(click());
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        imageButton2 = onView(
-                allOf(withContentDescription("Navigate up"),
-                        childAtPosition(
-                                allOf(withId(R.id.toolbar),
-                                        childAtPosition(
-                                                withId(R.id.my_app_bar),
-                                                0)),
-                                0),
-                        isDisplayed()));
-        imageButton2.check(matches(isDisplayed()));
-
-        imageView2 = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        imageView2.check(matches(isDisplayed()));
-
-        textView11 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 3 Name"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        0),
-                                1),
-                        isDisplayed()));
-        textView11.check(matches(withText("BM&C Test Building 3 Name")));
-
-        textView12 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 3 Address"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        1),
-                                1),
-                        isDisplayed()));
-        textView12.check(matches(withText("BM&C Test Building 3 Address")));
-
-        textView13 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 3 Location"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        2),
-                                1),
-                        isDisplayed()));
-        textView13.check(matches(withText("BM&C Test Building 3 Location")));
-
-        textView14 = onView(
-                allOf(withId(R.id.contents), withText("1992"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        3),
-                                1),
-                        isDisplayed()));
-        textView14.check(matches(withText("1992")));
-
-        imageButton3 = onView(
-                allOf(withId(R.id.fab),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                3),
-                        isDisplayed()));
-        imageButton3.check(matches(isDisplayed()));
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        overflowMenuButton = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        overflowMenuButton.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        appCompatTextView2 = onView(
-                allOf(withId(R.id.title), withText("Dashboard"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.content),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatTextView2.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        //BUILDING 4
-        appCompatTextView = onData(anything())
-                .inAdapterView(allOf(withId(R.id.lv_building_names),
-                        childAtPosition(
-                                withClassName(is("android.widget.LinearLayout")),
-                                1)))
-                .atPosition(3);
-        appCompatTextView.perform(click());
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        imageButton2 = onView(
-                allOf(withContentDescription("Navigate up"),
-                        childAtPosition(
-                                allOf(withId(R.id.toolbar),
-                                        childAtPosition(
-                                                withId(R.id.my_app_bar),
-                                                0)),
-                                0),
-                        isDisplayed()));
-        imageButton2.check(matches(isDisplayed()));
-
-        imageView2 = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        imageView2.check(matches(isDisplayed()));
-
-        textView11 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 4 Name"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        0),
-                                1),
-                        isDisplayed()));
-        textView11.check(matches(withText("BM&C Test Building 4 Name")));
-
-        textView12 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 4 Address"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        1),
-                                1),
-                        isDisplayed()));
-        textView12.check(matches(withText("BM&C Test Building 4 Address")));
-
-        textView13 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 4 Location"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        2),
-                                1),
-                        isDisplayed()));
-        textView13.check(matches(withText("BM&C Test Building 4 Location")));
-
-        textView14 = onView(
-                allOf(withId(R.id.contents), withText("1993"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        3),
-                                1),
-                        isDisplayed()));
-        textView14.check(matches(withText("1993")));
-
-        imageButton3 = onView(
-                allOf(withId(R.id.fab),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                3),
-                        isDisplayed()));
-        imageButton3.check(matches(isDisplayed()));
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        overflowMenuButton = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        overflowMenuButton.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        appCompatTextView2 = onView(
-                allOf(withId(R.id.title), withText("Dashboard"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.content),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatTextView2.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        //BUILDING 5
-        appCompatTextView = onData(anything())
-                .inAdapterView(allOf(withId(R.id.lv_building_names),
-                        childAtPosition(
-                                withClassName(is("android.widget.LinearLayout")),
-                                1)))
-                .atPosition(4);
-        appCompatTextView.perform(click());
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        imageButton2 = onView(
-                allOf(withContentDescription("Navigate up"),
-                        childAtPosition(
-                                allOf(withId(R.id.toolbar),
-                                        childAtPosition(
-                                                withId(R.id.my_app_bar),
-                                                0)),
-                                0),
-                        isDisplayed()));
-        imageButton2.check(matches(isDisplayed()));
-
-        imageView2 = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        imageView2.check(matches(isDisplayed()));
-
-        textView11 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 5 Name"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        0),
-                                1),
-                        isDisplayed()));
-        textView11.check(matches(withText("BM&C Test Building 5 Name")));
-
-        textView12 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 5 Address"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        1),
-                                1),
-                        isDisplayed()));
-        textView12.check(matches(withText("BM&C Test Building 5 Address")));
-
-        textView13 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 5 Location"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        2),
-                                1),
-                        isDisplayed()));
-        textView13.check(matches(withText("BM&C Test Building 5 Location")));
-
-        textView14 = onView(
-                allOf(withId(R.id.contents), withText("1994"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        3),
-                                1),
-                        isDisplayed()));
-        textView14.check(matches(withText("1994")));
-
-        imageButton3 = onView(
-                allOf(withId(R.id.fab),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                3),
-                        isDisplayed()));
-        imageButton3.check(matches(isDisplayed()));
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        overflowMenuButton = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        overflowMenuButton.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        appCompatTextView2 = onView(
-                allOf(withId(R.id.title), withText("Dashboard"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.content),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatTextView2.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        //BUILDING 6
-        appCompatTextView = onData(anything())
-                .inAdapterView(allOf(withId(R.id.lv_building_names),
-                        childAtPosition(
-                                withClassName(is("android.widget.LinearLayout")),
-                                1)))
-                .atPosition(5);
-        appCompatTextView.perform(click());
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        imageButton2 = onView(
-                allOf(withContentDescription("Navigate up"),
-                        childAtPosition(
-                                allOf(withId(R.id.toolbar),
-                                        childAtPosition(
-                                                withId(R.id.my_app_bar),
-                                                0)),
-                                0),
-                        isDisplayed()));
-        imageButton2.check(matches(isDisplayed()));
-
-        imageView2 = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        imageView2.check(matches(isDisplayed()));
-
-        textView11 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 6 Name"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        0),
-                                1),
-                        isDisplayed()));
-        textView11.check(matches(withText("BM&C Test Building 6 Name")));
-
-        textView12 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 6 Address"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        1),
-                                1),
-                        isDisplayed()));
-        textView12.check(matches(withText("BM&C Test Building 6 Address")));
-
-        textView13 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 6 Location"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        2),
-                                1),
-                        isDisplayed()));
-        textView13.check(matches(withText("BM&C Test Building 6 Location")));
-
-        textView14 = onView(
-                allOf(withId(R.id.contents), withText("1995"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        3),
-                                1),
-                        isDisplayed()));
-        textView14.check(matches(withText("1995")));
-
-        imageButton3 = onView(
-                allOf(withId(R.id.fab),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                3),
-                        isDisplayed()));
-        imageButton3.check(matches(isDisplayed()));
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        overflowMenuButton = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        overflowMenuButton.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        appCompatTextView2 = onView(
-                allOf(withId(R.id.title), withText("Dashboard"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.content),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatTextView2.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        //BUILDING 7
-        appCompatTextView = onData(anything())
-                .inAdapterView(allOf(withId(R.id.lv_building_names),
-                        childAtPosition(
-                                withClassName(is("android.widget.LinearLayout")),
-                                1)))
-                .atPosition(6);
-        appCompatTextView.perform(click());
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        imageButton2 = onView(
-                allOf(withContentDescription("Navigate up"),
-                        childAtPosition(
-                                allOf(withId(R.id.toolbar),
-                                        childAtPosition(
-                                                withId(R.id.my_app_bar),
-                                                0)),
-                                0),
-                        isDisplayed()));
-        imageButton2.check(matches(isDisplayed()));
-
-        imageView2 = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        imageView2.check(matches(isDisplayed()));
-
-        textView11 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 7 Name"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        0),
-                                1),
-                        isDisplayed()));
-        textView11.check(matches(withText("BM&C Test Building 7 Name")));
-
-        textView12 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 7 Address"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        1),
-                                1),
-                        isDisplayed()));
-        textView12.check(matches(withText("BM&C Test Building 7 Address")));
-
-        textView13 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 7 Location"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        2),
-                                1),
-                        isDisplayed()));
-        textView13.check(matches(withText("BM&C Test Building 7 Location")));
-
-        textView14 = onView(
-                allOf(withId(R.id.contents), withText("1996"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        3),
-                                1),
-                        isDisplayed()));
-        textView14.check(matches(withText("1996")));
-
-        imageButton3 = onView(
-                allOf(withId(R.id.fab),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                3),
-                        isDisplayed()));
-        imageButton3.check(matches(isDisplayed()));
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        overflowMenuButton = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        overflowMenuButton.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        appCompatTextView2 = onView(
-                allOf(withId(R.id.title), withText("Dashboard"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.content),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatTextView2.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        //BUILDING 8
-        appCompatTextView = onData(anything())
-                .inAdapterView(allOf(withId(R.id.lv_building_names),
-                        childAtPosition(
-                                withClassName(is("android.widget.LinearLayout")),
-                                1)))
-                .atPosition(7);
-        appCompatTextView.perform(click());
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        imageButton2 = onView(
-                allOf(withContentDescription("Navigate up"),
-                        childAtPosition(
-                                allOf(withId(R.id.toolbar),
-                                        childAtPosition(
-                                                withId(R.id.my_app_bar),
-                                                0)),
-                                0),
-                        isDisplayed()));
-        imageButton2.check(matches(isDisplayed()));
-
-        imageView2 = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        imageView2.check(matches(isDisplayed()));
-
-        textView11 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 8 Name"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        0),
-                                1),
-                        isDisplayed()));
-        textView11.check(matches(withText("BM&C Test Building 8 Name")));
-
-        textView12 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 8 Address"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        1),
-                                1),
-                        isDisplayed()));
-        textView12.check(matches(withText("BM&C Test Building 8 Address")));
-
-        textView13 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 8 Location"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        2),
-                                1),
-                        isDisplayed()));
-        textView13.check(matches(withText("BM&C Test Building 8 Location")));
-
-        textView14 = onView(
-                allOf(withId(R.id.contents), withText("1997"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        3),
-                                1),
-                        isDisplayed()));
-        textView14.check(matches(withText("1997")));
-
-        imageButton3 = onView(
-                allOf(withId(R.id.fab),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                3),
-                        isDisplayed()));
-        imageButton3.check(matches(isDisplayed()));
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        overflowMenuButton = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        overflowMenuButton.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        appCompatTextView2 = onView(
-                allOf(withId(R.id.title), withText("Dashboard"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.content),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatTextView2.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        //BUILDING 9
-        appCompatTextView = onData(anything())
-                .inAdapterView(allOf(withId(R.id.lv_building_names),
-                        childAtPosition(
-                                withClassName(is("android.widget.LinearLayout")),
-                                1)))
-                .atPosition(8);
-        appCompatTextView.perform(click());
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        imageButton2 = onView(
-                allOf(withContentDescription("Navigate up"),
-                        childAtPosition(
-                                allOf(withId(R.id.toolbar),
-                                        childAtPosition(
-                                                withId(R.id.my_app_bar),
-                                                0)),
-                                0),
-                        isDisplayed()));
-        imageButton2.check(matches(isDisplayed()));
-
-        imageView2 = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        imageView2.check(matches(isDisplayed()));
-
-        textView11 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 9 Name"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        0),
-                                1),
-                        isDisplayed()));
-        textView11.check(matches(withText("BM&C Test Building 9 Name")));
-
-        textView12 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 9 Address"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        1),
-                                1),
-                        isDisplayed()));
-        textView12.check(matches(withText("BM&C Test Building 9 Address")));
-
-        textView13 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 9 Location"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        2),
-                                1),
-                        isDisplayed()));
-        textView13.check(matches(withText("BM&C Test Building 9 Location")));
-
-        textView14 = onView(
-                allOf(withId(R.id.contents), withText("1998"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        3),
-                                1),
-                        isDisplayed()));
-        textView14.check(matches(withText("1998")));
-
-        imageButton3 = onView(
-                allOf(withId(R.id.fab),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                3),
-                        isDisplayed()));
-        imageButton3.check(matches(isDisplayed()));
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        overflowMenuButton = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        overflowMenuButton.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        appCompatTextView2 = onView(
-                allOf(withId(R.id.title), withText("Dashboard"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.content),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatTextView2.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        //BUILDING 10
-        appCompatTextView = onData(anything())
-                .inAdapterView(allOf(withId(R.id.lv_building_names),
-                        childAtPosition(
-                                withClassName(is("android.widget.LinearLayout")),
-                                1)))
-                .atPosition(9);
-        appCompatTextView.perform(click());
-
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        imageButton2 = onView(
-                allOf(withContentDescription("Navigate up"),
-                        childAtPosition(
-                                allOf(withId(R.id.toolbar),
-                                        childAtPosition(
-                                                withId(R.id.my_app_bar),
-                                                0)),
-                                0),
-                        isDisplayed()));
-        imageButton2.check(matches(isDisplayed()));
-
-        imageView2 = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        imageView2.check(matches(isDisplayed()));
-
-        textView11 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 10 Name"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        0),
-                                1),
-                        isDisplayed()));
-        textView11.check(matches(withText("BM&C Test Building 10 Name")));
-
-        textView12 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 10 Address"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        1),
-                                1),
-                        isDisplayed()));
-        textView12.check(matches(withText("BM&C Test Building 10 Address")));
-
-        textView13 = onView(
-                allOf(withId(R.id.contents), withText("BM&C Test Building 10 Location"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        2),
-                                1),
-                        isDisplayed()));
-        textView13.check(matches(withText("BM&C Test Building 10 Location")));
-
-        textView14 = onView(
-                allOf(withId(R.id.contents), withText("1999"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.lv_general_info),
-                                        3),
-                                1),
-                        isDisplayed()));
-        textView14.check(matches(withText("1999")));
-
-        imageButton3 = onView(
-                allOf(withId(R.id.fab),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(android.R.id.content),
-                                        0),
-                                3),
-                        isDisplayed()));
-        imageButton3.check(matches(isDisplayed()));
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        overflowMenuButton = onView(
-                allOf(withContentDescription("More options"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        2),
-                                0),
-                        isDisplayed()));
-        overflowMenuButton.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        appCompatTextView2 = onView(
-                allOf(withId(R.id.title), withText("Dashboard"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.content),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatTextView2.perform(click());
+                .atPosition(0);
+        appCompatTextView3.perform(click());
 
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
@@ -1634,7 +632,7 @@ public class JaneSmithDatabaseDataAssertionWithDashboardNav {
             e.printStackTrace();
         }
 
-        ViewInteraction appCompatTextView3 = onView(
+        ViewInteraction appCompatTextView4 = onView(
                 allOf(withId(R.id.title), withText("Logout"),
                         childAtPosition(
                                 childAtPosition(
@@ -1642,7 +640,894 @@ public class JaneSmithDatabaseDataAssertionWithDashboardNav {
                                         0),
                                 0),
                         isDisplayed()));
-        appCompatTextView3.perform(click());
+        appCompatTextView4.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatAutoCompleteTextView = onView(
+                allOf(withId(R.id.username),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("jane.smith001"), closeSoftKeyboard());
+
+        appCompatEditText = onView(
+                allOf(withId(R.id.password),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
+
+        ViewInteraction appCompatButton3 = onView(
+                allOf(withId(R.id.sign_in_button), withText("Login"),
+                        childAtPosition(
+                                allOf(withId(R.id.credentials_login_form),
+                                        childAtPosition(
+                                                withId(R.id.login_form),
+                                                0)),
+                                3)));
+        appCompatButton3.perform(scrollTo(), click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DataInteraction appCompatTextView5 = onData(anything())
+                .inAdapterView(allOf(withId(R.id.lv_building_names),
+                        childAtPosition(
+                                withClassName(is("android.widget.LinearLayout")),
+                                1)))
+                .atPosition(1);
+        appCompatTextView5.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction floatingActionButton3 = onView(
+                allOf(withId(R.id.fab),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.content),
+                                        0),
+                                3),
+                        isDisplayed()));
+        floatingActionButton3.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction overflowMenuButton3 = onView(
+                allOf(withContentDescription("More options"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.toolbar),
+                                        2),
+                                0),
+                        isDisplayed()));
+        overflowMenuButton3.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction appCompatTextView6 = onView(
+                allOf(withId(R.id.title), withText("Logout"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.content),
+                                        0),
+                                0),
+                        isDisplayed()));
+        appCompatTextView6.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatAutoCompleteTextView = onView(
+                allOf(withId(R.id.username),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("jane.smith001"), closeSoftKeyboard());
+
+        appCompatEditText = onView(
+                allOf(withId(R.id.password),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
+
+        ViewInteraction appCompatButton4 = onView(
+                allOf(withId(R.id.sign_in_button), withText("Login"),
+                        childAtPosition(
+                                allOf(withId(R.id.credentials_login_form),
+                                        childAtPosition(
+                                                withId(R.id.login_form),
+                                                0)),
+                                3)));
+        appCompatButton4.perform(scrollTo(), click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DataInteraction appCompatTextView7 = onData(anything())
+                .inAdapterView(allOf(withId(R.id.lv_building_names),
+                        childAtPosition(
+                                withClassName(is("android.widget.LinearLayout")),
+                                1)))
+                .atPosition(1);
+        appCompatTextView7.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction overflowMenuButton4 = onView(
+                allOf(withContentDescription("More options"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.toolbar),
+                                        2),
+                                0),
+                        isDisplayed()));
+        overflowMenuButton4.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction appCompatTextView8 = onView(
+                allOf(withId(R.id.title), withText("Logout"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.content),
+                                        0),
+                                0),
+                        isDisplayed()));
+        appCompatTextView8.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatAutoCompleteTextView = onView(
+                allOf(withId(R.id.username),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("jane.smith001"), closeSoftKeyboard());
+
+        appCompatEditText = onView(
+                allOf(withId(R.id.password),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
+
+        ViewInteraction appCompatButton5 = onView(
+                allOf(withId(R.id.sign_in_button), withText("Login"),
+                        childAtPosition(
+                                allOf(withId(R.id.credentials_login_form),
+                                        childAtPosition(
+                                                withId(R.id.login_form),
+                                                0)),
+                                3)));
+        appCompatButton5.perform(scrollTo(), click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DataInteraction appCompatTextView9 = onData(anything())
+                .inAdapterView(allOf(withId(R.id.lv_building_names),
+                        childAtPosition(
+                                withClassName(is("android.widget.LinearLayout")),
+                                1)))
+                .atPosition(2);
+        appCompatTextView9.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction floatingActionButton4 = onView(
+                allOf(withId(R.id.fab),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.content),
+                                        0),
+                                3),
+                        isDisplayed()));
+        floatingActionButton4.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction overflowMenuButton5 = onView(
+                allOf(withContentDescription("More options"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.toolbar),
+                                        2),
+                                0),
+                        isDisplayed()));
+        overflowMenuButton5.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction appCompatTextView10 = onView(
+                allOf(withId(R.id.title), withText("Logout"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.content),
+                                        0),
+                                0),
+                        isDisplayed()));
+        appCompatTextView10.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatAutoCompleteTextView = onView(
+                allOf(withId(R.id.username),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("jane.smith001"), closeSoftKeyboard());
+
+        appCompatEditText = onView(
+                allOf(withId(R.id.password),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
+
+        ViewInteraction appCompatButton6 = onView(
+                allOf(withId(R.id.sign_in_button), withText("Login"),
+                        childAtPosition(
+                                allOf(withId(R.id.credentials_login_form),
+                                        childAtPosition(
+                                                withId(R.id.login_form),
+                                                0)),
+                                3)));
+        appCompatButton6.perform(scrollTo(), click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DataInteraction appCompatTextView11 = onData(anything())
+                .inAdapterView(allOf(withId(R.id.lv_building_names),
+                        childAtPosition(
+                                withClassName(is("android.widget.LinearLayout")),
+                                1)))
+                .atPosition(2);
+        appCompatTextView11.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction overflowMenuButton6 = onView(
+                allOf(withContentDescription("More options"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.toolbar),
+                                        2),
+                                0),
+                        isDisplayed()));
+        overflowMenuButton6.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction appCompatTextView12 = onView(
+                allOf(withId(R.id.title), withText("Logout"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.content),
+                                        0),
+                                0),
+                        isDisplayed()));
+        appCompatTextView12.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatAutoCompleteTextView = onView(
+                allOf(withId(R.id.username),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("jane.smith001"), closeSoftKeyboard());
+
+        appCompatEditText = onView(
+                allOf(withId(R.id.password),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
+
+        ViewInteraction appCompatButton7 = onView(
+                allOf(withId(R.id.sign_in_button), withText("Login"),
+                        childAtPosition(
+                                allOf(withId(R.id.credentials_login_form),
+                                        childAtPosition(
+                                                withId(R.id.login_form),
+                                                0)),
+                                3)));
+        appCompatButton7.perform(scrollTo(), click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        DataInteraction appCompatTextView13 = onData(anything())
+                .inAdapterView(allOf(withId(R.id.lv_building_names),
+                        childAtPosition(
+                                withClassName(is("android.widget.LinearLayout")),
+                                1)))
+                .atPosition(8);
+        appCompatTextView13.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction floatingActionButton5 = onView(
+                allOf(withId(R.id.fab),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.content),
+                                        0),
+                                3),
+                        isDisplayed()));
+        floatingActionButton5.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        overflowMenuButton5 = onView(
+                allOf(withContentDescription("More options"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.toolbar),
+                                        2),
+                                0),
+                        isDisplayed()));
+        overflowMenuButton5.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatTextView10 = onView(
+                allOf(withId(R.id.title), withText("Logout"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.content),
+                                        0),
+                                0),
+                        isDisplayed()));
+        appCompatTextView10.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatAutoCompleteTextView = onView(
+                allOf(withId(R.id.username),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("jane.smith001"), closeSoftKeyboard());
+
+        appCompatEditText = onView(
+                allOf(withId(R.id.password),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
+
+        appCompatButton6 = onView(
+                allOf(withId(R.id.sign_in_button), withText("Login"),
+                        childAtPosition(
+                                allOf(withId(R.id.credentials_login_form),
+                                        childAtPosition(
+                                                withId(R.id.login_form),
+                                                0)),
+                                3)));
+        appCompatButton6.perform(scrollTo(), click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatTextView11 = onData(anything())
+                .inAdapterView(allOf(withId(R.id.lv_building_names),
+                        childAtPosition(
+                                withClassName(is("android.widget.LinearLayout")),
+                                1)))
+                .atPosition(8);
+        appCompatTextView11.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        overflowMenuButton6 = onView(
+                allOf(withContentDescription("More options"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.toolbar),
+                                        2),
+                                0),
+                        isDisplayed()));
+        overflowMenuButton6.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatTextView12 = onView(
+                allOf(withId(R.id.title), withText("Logout"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.content),
+                                        0),
+                                0),
+                        isDisplayed()));
+        appCompatTextView12.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatAutoCompleteTextView = onView(
+                allOf(withId(R.id.username),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("jane.smith001"), closeSoftKeyboard());
+
+        appCompatEditText = onView(
+                allOf(withId(R.id.password),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
+
+        appCompatButton7 = onView(
+                allOf(withId(R.id.sign_in_button), withText("Login"),
+                        childAtPosition(
+                                allOf(withId(R.id.credentials_login_form),
+                                        childAtPosition(
+                                                withId(R.id.login_form),
+                                                0)),
+                                3)));
+        appCompatButton7.perform(scrollTo(), click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatTextView13 = onData(anything())
+                .inAdapterView(allOf(withId(R.id.lv_building_names),
+                        childAtPosition(
+                                withClassName(is("android.widget.LinearLayout")),
+                                1)))
+                .atPosition(9);
+        appCompatTextView13.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        floatingActionButton5 = onView(
+                allOf(withId(R.id.fab),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(android.R.id.content),
+                                        0),
+                                3),
+                        isDisplayed()));
+        floatingActionButton5.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        overflowMenuButton5 = onView(
+                allOf(withContentDescription("More options"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.toolbar),
+                                        2),
+                                0),
+                        isDisplayed()));
+        overflowMenuButton5.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatTextView10 = onView(
+                allOf(withId(R.id.title), withText("Logout"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.content),
+                                        0),
+                                0),
+                        isDisplayed()));
+        appCompatTextView10.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatAutoCompleteTextView = onView(
+                allOf(withId(R.id.username),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("jane.smith001"), closeSoftKeyboard());
+
+        appCompatEditText = onView(
+                allOf(withId(R.id.password),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
+
+        appCompatButton6 = onView(
+                allOf(withId(R.id.sign_in_button), withText("Login"),
+                        childAtPosition(
+                                allOf(withId(R.id.credentials_login_form),
+                                        childAtPosition(
+                                                withId(R.id.login_form),
+                                                0)),
+                                3)));
+        appCompatButton6.perform(scrollTo(), click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatTextView11 = onData(anything())
+                .inAdapterView(allOf(withId(R.id.lv_building_names),
+                        childAtPosition(
+                                withClassName(is("android.widget.LinearLayout")),
+                                1)))
+                .atPosition(9);
+        appCompatTextView11.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        overflowMenuButton6 = onView(
+                allOf(withContentDescription("More options"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.toolbar),
+                                        2),
+                                0),
+                        isDisplayed()));
+        overflowMenuButton6.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatTextView12 = onView(
+                allOf(withId(R.id.title), withText("Logout"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.content),
+                                        0),
+                                0),
+                        isDisplayed()));
+        appCompatTextView12.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        appCompatAutoCompleteTextView = onView(
+                allOf(withId(R.id.username),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("jane.smith001"), closeSoftKeyboard());
+
+        appCompatEditText = onView(
+                allOf(withId(R.id.password),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
+
+        appCompatButton6 = onView(
+                allOf(withId(R.id.sign_in_button), withText("Login"),
+                        childAtPosition(
+                                allOf(withId(R.id.credentials_login_form),
+                                        childAtPosition(
+                                                withId(R.id.login_form),
+                                                0)),
+                                3)));
+        appCompatButton6.perform(scrollTo(), click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        overflowMenuButton = onView(
+                allOf(withContentDescription("More options"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.toolbar),
+                                        2),
+                                0),
+                        isDisplayed()));
+        overflowMenuButton.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction appCompatTextView0 = onView(
+                allOf(withId(R.id.title), withText("Logout"),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.content),
+                                        0),
+                                0),
+                        isDisplayed()));
+        appCompatTextView0.perform(click());
     }
 
     private static Matcher<View> childAtPosition(

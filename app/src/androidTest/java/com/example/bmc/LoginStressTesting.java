@@ -30,45 +30,29 @@ import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.StringEndsWith.endsWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class LoginActivityTest_PermissionsDenied {
+public class LoginStressTesting {
 
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
-//    @Rule
-//    public GrantPermissionRule mGrantPermissionRule =
-//            GrantPermissionRule.grant(
-//                    "android.permission.CAMERA",
-//                    "android.permission.READ_EXTERNAL_STORAGE",
-//                    "android.permission.WRITE_EXTERNAL_STORAGE");
-
     @Test
-    public void loginActivityTest_PermissionsDenied() {
+    public void loginStressTesting() {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
+            allowPermissionsIfNeeded();
             Thread.sleep(1000);
-            denyPermissionsIfNeeded();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(1000);
-            denyPermissionsIfNeeded();
+            allowPermissionsIfNeeded();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -115,65 +99,86 @@ public class LoginActivityTest_PermissionsDenied {
                         isDisplayed()));
         button.check(matches(isDisplayed()));
 
-        ViewInteraction appCompatAutoCompleteTextView = onView(
-                allOf(withId(R.id.username),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
-                                        0),
-                                0)));
-        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("jane.smith001"), closeSoftKeyboard());
+        ViewInteraction appCompatAutoCompleteTextView;
+        ViewInteraction appCompatEditText;
+        ViewInteraction appCompatButton;
+        ViewInteraction overflowMenuButton;
+        ViewInteraction appCompatTextView;
 
-        ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.password),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
-                                        0),
-                                0)));
-        appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
+        for (int i = 0; i < 100; i++ ) {
+            appCompatAutoCompleteTextView = onView(
+                    allOf(withId(R.id.username),
+                            childAtPosition(
+                                    childAtPosition(
+                                            withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                            0),
+                                    0)));
+            appCompatAutoCompleteTextView.perform(scrollTo(), typeText("jane.smith001"), closeSoftKeyboard());
 
-        ViewInteraction appCompatCheckBox = onView(
-                allOf(withId(R.id.remember_me), withText("Remember me"),
-                        childAtPosition(
-                                allOf(withId(R.id.credentials_login_form),
-                                        childAtPosition(
-                                                withId(R.id.login_form),
-                                                0)),
-                                2)));
-        appCompatCheckBox.perform(scrollTo(), click());
+            appCompatEditText = onView(
+                    allOf(withId(R.id.password),
+                            childAtPosition(
+                                    childAtPosition(
+                                            withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                            0),
+                                    0)));
+            appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
 
-        ViewInteraction appCompatButton = onView(
-                allOf(withId(R.id.sign_in_button), withText("Login"),
-                        childAtPosition(
-                                allOf(withId(R.id.credentials_login_form),
-                                        childAtPosition(
-                                                withId(R.id.login_form),
-                                                0)),
-                                3)));
-        appCompatButton.perform(scrollTo(), click());
+            appCompatButton = onView(
+                    allOf(withId(R.id.sign_in_button), withText("Login"),
+                            childAtPosition(
+                                    allOf(withId(R.id.credentials_login_form),
+                                            childAtPosition(
+                                                    withId(R.id.login_form),
+                                                    0)),
+                                    3)));
+            appCompatButton.perform(scrollTo(), click());
 
-//        ViewInteraction textView = onView(
-//                allOf(withId(R.id.alertTitle), withText("Alert"),
-//                        childAtPosition(
-//                                allOf(withId(R.id.title_template),
-//                                        childAtPosition(
-//                                                withId(R.id.topPanel),
-//                                                0)),
-//                                0),
-//                        isDisplayed()));
-//        textView.check(matches(isDisplayed()));
-        onView(withText(endsWith("Alert"))).check(matches(isDisplayed()));
-        onView(withText(endsWith("EXIT"))).check(matches(isDisplayed()));
+            // Added a sleep statement to match the app's execution delay.
+            // The recommended way to handle such scenarios is to use Espresso idling resources:
+            // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-        ViewInteraction appCompatButton2 = onView(
-                allOf(withId(android.R.id.button1), withText("EXIT"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.buttonPanel),
-                                        0),
-                                3)));
-        appCompatButton2.perform(scrollTo(), click());
+            overflowMenuButton = onView(
+                    allOf(withContentDescription("More options"),
+                            childAtPosition(
+                                    childAtPosition(
+                                            withId(R.id.toolbar),
+                                            2),
+                                    0),
+                            isDisplayed()));
+            overflowMenuButton.perform(click());
+
+            // Added a sleep statement to match the app's execution delay.
+            // The recommended way to handle such scenarios is to use Espresso idling resources:
+            // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            appCompatTextView = onView(
+                    allOf(withId(R.id.title), withText("Logout"),
+                            childAtPosition(
+                                    childAtPosition(
+                                            withId(R.id.content),
+                                            0),
+                                    0),
+                            isDisplayed()));
+            appCompatTextView.perform(click());
+        }
+
+        appCompatAutoCompleteTextView= null;
+        appCompatEditText= null;
+        appCompatButton= null;
+        overflowMenuButton= null;
+        appCompatTextView = null;
+        System.gc();
     }
 
     private static Matcher<View> childAtPosition(
@@ -195,17 +200,17 @@ public class LoginActivityTest_PermissionsDenied {
         };
     }
 
-    private static void denyPermissionsIfNeeded() {
+    private static void allowPermissionsIfNeeded() {
 //        if (Build.VERSION.SDK_INT >= 23) {
-            UiDevice device = UiDevice.getInstance(getInstrumentation());
-            UiObject denyPermissions = device.findObject(new UiSelector().text("DENY"));
-            if (denyPermissions.exists()) {
-                try {
-                    denyPermissions.click();
-                } catch (UiObjectNotFoundException e) {
-                    e.printStackTrace();
-                }
+        UiDevice device = UiDevice.getInstance(getInstrumentation());
+        UiObject allowPermissions = device.findObject(new UiSelector().text("ALLOW"));
+        if (allowPermissions.exists()) {
+            try {
+                allowPermissions.click();
+            } catch (UiObjectNotFoundException e) {
+                e.printStackTrace();
             }
+        }
 //        }
     }
 }

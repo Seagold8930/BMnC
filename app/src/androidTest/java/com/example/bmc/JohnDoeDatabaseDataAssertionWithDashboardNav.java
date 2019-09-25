@@ -32,6 +32,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
@@ -119,7 +120,7 @@ public class JohnDoeDatabaseDataAssertionWithDashboardNav {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatAutoCompleteTextView.perform(scrollTo(), replaceText("john.doe001"), closeSoftKeyboard());
+        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("john.doe001"), closeSoftKeyboard());
 
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.password),
@@ -128,7 +129,7 @@ public class JohnDoeDatabaseDataAssertionWithDashboardNav {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText.perform(scrollTo(), replaceText("John.Doe001"), closeSoftKeyboard());
+        appCompatEditText.perform(scrollTo(), typeText("John.Doe001"), closeSoftKeyboard());
 
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.sign_in_button), withText("Login"),
@@ -156,7 +157,7 @@ public class JohnDoeDatabaseDataAssertionWithDashboardNav {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText2.perform(scrollTo(), replaceText("Wellington2019"), closeSoftKeyboard());
+        appCompatEditText2.perform(scrollTo(), typeText("Wellington2019"), closeSoftKeyboard());
 
         ViewInteraction appCompatEditText3 = onView(
                 allOf(withId(R.id.password_two),
@@ -165,7 +166,7 @@ public class JohnDoeDatabaseDataAssertionWithDashboardNav {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText3.perform(scrollTo(), replaceText("Wellington2019"), closeSoftKeyboard());
+        appCompatEditText3.perform(scrollTo(), typeText("Wellington2019"), closeSoftKeyboard());
 
         appCompatButton = onView(
                 allOf(withId(R.id.change_password_button), withText("Change Password"),

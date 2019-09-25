@@ -25,8 +25,8 @@ import androidx.test.uiautomator.UiSelector;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -142,7 +142,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatAutoCompleteTextView.perform(scrollTo(), replaceText("te st"), closeSoftKeyboard());
+        appCompatAutoCompleteTextView.perform(scrollTo(), typeText("te st"), closeSoftKeyboard());
 
         ViewInteraction appCompatButton2 = onView(
                 allOf(withId(R.id.sign_in_button), withText("Login"),
@@ -169,7 +169,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatAutoCompleteTextView2.perform(scrollTo(), replaceText("test"));
+        appCompatAutoCompleteTextView2.perform(scrollTo(), typeText("test"));
 
         ViewInteraction appCompatAutoCompleteTextView3 = onView(
                 allOf(withId(R.id.username), withText("test"),
@@ -215,7 +215,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatAutoCompleteTextView5.perform(scrollTo(), replaceText("testtest"));
+        appCompatAutoCompleteTextView5.perform(scrollTo(), typeText("testtest"));
 
         ViewInteraction appCompatAutoCompleteTextView6 = onView(
                 allOf(withId(R.id.username), withText("testtest"),
@@ -252,7 +252,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatAutoCompleteTextView9.perform(scrollTo(), replaceText("test.test0"));
+        appCompatAutoCompleteTextView9.perform(scrollTo(), typeText("test.test0"));
 
         ViewInteraction appCompatAutoCompleteTextView10 = onView(
                 allOf(withId(R.id.username), withText("test.test0"),
@@ -289,7 +289,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText.perform(scrollTo(), replaceText("te st"), closeSoftKeyboard());
+        appCompatEditText.perform(scrollTo(), typeText("te st"), closeSoftKeyboard());
 
         ViewInteraction appCompatButton7 = onView(
                 allOf(withId(R.id.sign_in_button), withText("Login"),
@@ -316,7 +316,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText2.perform(scrollTo(), replaceText("test"));
+        appCompatEditText2.perform(scrollTo(), typeText("test"));
 
         ViewInteraction appCompatEditText3 = onView(
                 allOf(withId(R.id.password), withText("test"),
@@ -353,7 +353,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText4.perform(scrollTo(), replaceText("testtest"));
+        appCompatEditText4.perform(scrollTo(), typeText("testtest"));
 
         ViewInteraction appCompatEditText5 = onView(
                 allOf(withId(R.id.password), withText("testtest"),

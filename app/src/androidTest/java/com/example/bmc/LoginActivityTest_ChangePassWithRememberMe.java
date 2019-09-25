@@ -29,8 +29,8 @@ import androidx.test.uiautomator.UiSelector;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -127,7 +127,7 @@ public class LoginActivityTest_ChangePassWithRememberMe {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatAutoCompleteTextView2.perform(scrollTo(), replaceText("john.doe001"), closeSoftKeyboard());
+        appCompatAutoCompleteTextView2.perform(scrollTo(), typeText("john.doe001"), closeSoftKeyboard());
 
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.password),
@@ -136,7 +136,7 @@ public class LoginActivityTest_ChangePassWithRememberMe {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText.perform(scrollTo(), replaceText("John.Doe001"), closeSoftKeyboard());
+        appCompatEditText.perform(scrollTo(), typeText("John.Doe001"), closeSoftKeyboard());
 
         ViewInteraction appCompatCheckBox = onView(
                 allOf(withId(R.id.remember_me), withText("Remember me"),
@@ -223,7 +223,7 @@ public class LoginActivityTest_ChangePassWithRememberMe {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText2.perform(scrollTo(), replaceText("te st"), closeSoftKeyboard());
+        appCompatEditText2.perform(scrollTo(), typeText("te st"), closeSoftKeyboard());
 
         ViewInteraction appCompatButton3 = onView(
                 allOf(withId(R.id.change_password_button), withText("Change Password"),
@@ -250,7 +250,7 @@ public class LoginActivityTest_ChangePassWithRememberMe {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText3.perform(scrollTo(), replaceText("te st"), closeSoftKeyboard());
+        appCompatEditText3.perform(scrollTo(), typeText("te st"), closeSoftKeyboard());
 
         ViewInteraction appCompatButton4 = onView(
                 allOf(withId(R.id.change_password_button), withText("Change Password"),
@@ -277,7 +277,7 @@ public class LoginActivityTest_ChangePassWithRememberMe {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText4.perform(scrollTo(), replaceText("test"));
+        appCompatEditText4.perform(scrollTo(), typeText("test"));
 
         ViewInteraction appCompatEditText5 = onView(
                 allOf(withId(R.id.password_one), withText("test"),
@@ -296,7 +296,7 @@ public class LoginActivityTest_ChangePassWithRememberMe {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText6.perform(scrollTo(), replaceText("test"));
+        appCompatEditText6.perform(scrollTo(), typeText("test"));
 
         ViewInteraction appCompatEditText7 = onView(
                 allOf(withId(R.id.password_two), withText("test"),
@@ -333,7 +333,7 @@ public class LoginActivityTest_ChangePassWithRememberMe {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText8.perform(scrollTo(), replaceText("testtest"));
+        appCompatEditText8.perform(scrollTo(), typeText("testtest"));
 
         ViewInteraction appCompatEditText9 = onView(
                 allOf(withId(R.id.password_one), withText("testtest"),
@@ -352,7 +352,7 @@ public class LoginActivityTest_ChangePassWithRememberMe {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText10.perform(scrollTo(), replaceText("testtest"));
+        appCompatEditText10.perform(scrollTo(), typeText("testtest"));
 
         ViewInteraction appCompatEditText11 = onView(
                 allOf(withId(R.id.password_two), withText("testtest"),
@@ -389,7 +389,7 @@ public class LoginActivityTest_ChangePassWithRememberMe {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText12.perform(scrollTo(), replaceText("testtesT0"));
+        appCompatEditText12.perform(scrollTo(), typeText("testtesT0"));
 
         ViewInteraction appCompatEditText13 = onView(
                 allOf(withId(R.id.password_one), withText("testtesT0"),
@@ -408,7 +408,7 @@ public class LoginActivityTest_ChangePassWithRememberMe {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText14.perform(scrollTo(), replaceText("testtesT0"));
+        appCompatEditText14.perform(scrollTo(), typeText("testtesT0"));
 
         ViewInteraction appCompatEditText15 = onView(
                 allOf(withId(R.id.password_two), withText("testtesT0"),

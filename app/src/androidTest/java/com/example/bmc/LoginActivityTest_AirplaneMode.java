@@ -35,30 +35,23 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.StringEndsWith.endsWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class LoginActivityTest_PermissionsDenied {
+public class LoginActivityTest_AirplaneMode {
 
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
-//    @Rule
-//    public GrantPermissionRule mGrantPermissionRule =
-//            GrantPermissionRule.grant(
-//                    "android.permission.CAMERA",
-//                    "android.permission.READ_EXTERNAL_STORAGE",
-//                    "android.permission.WRITE_EXTERNAL_STORAGE");
-
     @Test
-    public void loginActivityTest_PermissionsDenied() {
+    public void loginActivityTest_AirplaneMode() {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
+            allowPermissionsIfNeeded();
             Thread.sleep(1000);
-            denyPermissionsIfNeeded();
+            allowPermissionsIfNeeded();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -67,8 +60,7 @@ public class LoginActivityTest_PermissionsDenied {
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(1000);
-            denyPermissionsIfNeeded();
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -133,16 +125,6 @@ public class LoginActivityTest_PermissionsDenied {
                                 0)));
         appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
 
-        ViewInteraction appCompatCheckBox = onView(
-                allOf(withId(R.id.remember_me), withText("Remember me"),
-                        childAtPosition(
-                                allOf(withId(R.id.credentials_login_form),
-                                        childAtPosition(
-                                                withId(R.id.login_form),
-                                                0)),
-                                2)));
-        appCompatCheckBox.perform(scrollTo(), click());
-
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.sign_in_button), withText("Login"),
                         childAtPosition(
@@ -153,27 +135,31 @@ public class LoginActivityTest_PermissionsDenied {
                                 3)));
         appCompatButton.perform(scrollTo(), click());
 
-//        ViewInteraction textView = onView(
-//                allOf(withId(R.id.alertTitle), withText("Alert"),
-//                        childAtPosition(
-//                                allOf(withId(R.id.title_template),
-//                                        childAtPosition(
-//                                                withId(R.id.topPanel),
-//                                                0)),
-//                                0),
-//                        isDisplayed()));
-//        textView.check(matches(isDisplayed()));
-        onView(withText(endsWith("Alert"))).check(matches(isDisplayed()));
-        onView(withText(endsWith("EXIT"))).check(matches(isDisplayed()));
-
-        ViewInteraction appCompatButton2 = onView(
-                allOf(withId(android.R.id.button1), withText("EXIT"),
+        ViewInteraction textView = onView(
+                allOf(withId(R.id.snackbar_text), withText("Connection failed. Check your network access."),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(R.id.buttonPanel),
+                                        IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class),
                                         0),
-                                3)));
-        appCompatButton2.perform(scrollTo(), click());
+                                0),
+                        isDisplayed()));
+        textView.check(matches(isDisplayed()));
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        ViewInteraction textView2 = onView(
+                allOf(withId(R.id.snackbar_text), withText("Connection failed. Check your network access."),
+                        childAtPosition(
+                                childAtPosition(
+                                        IsInstanceOf.<View>instanceOf(android.widget.FrameLayout.class),
+                                        0),
+                                0),
+                        isDisplayed()));
+        textView2.check(matches(withText("Connection failed. Check your network access.")));
     }
 
     private static Matcher<View> childAtPosition(
@@ -195,17 +181,17 @@ public class LoginActivityTest_PermissionsDenied {
         };
     }
 
-    private static void denyPermissionsIfNeeded() {
+    private static void allowPermissionsIfNeeded() {
 //        if (Build.VERSION.SDK_INT >= 23) {
-            UiDevice device = UiDevice.getInstance(getInstrumentation());
-            UiObject denyPermissions = device.findObject(new UiSelector().text("DENY"));
-            if (denyPermissions.exists()) {
-                try {
-                    denyPermissions.click();
-                } catch (UiObjectNotFoundException e) {
-                    e.printStackTrace();
-                }
+        UiDevice device = UiDevice.getInstance(getInstrumentation());
+        UiObject allowPermissions = device.findObject(new UiSelector().text("ALLOW"));
+        if (allowPermissions.exists()) {
+            try {
+                allowPermissions.click();
+            } catch (UiObjectNotFoundException e) {
+                e.printStackTrace();
             }
+        }
 //        }
     }
 }
