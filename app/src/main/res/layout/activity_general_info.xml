@@ -24,8 +24,8 @@
     <ListView
         android:id="@+id/lv_general_info"
         android:layout_width="fill_parent"
-        android:layout_height="250dp"
-        android:layout_below="@+id/my_app_bar"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/my_app_bar" />
 
     <include layout="@layout/content_general_info" />
 
@@ -33,7 +33,7 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/lv_general_info"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_menu_camera" />

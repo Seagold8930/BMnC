@@ -55,7 +55,6 @@ import android.widget.Toast;
 
 import com.example.bmc.auxiliary.Building;
 import com.example.bmc.auxiliary.User;
-import com.example.bmc.auxiliary.UserCredentials;
 import com.example.bmc.validate.Validate;
 
 import java.util.ArrayList;
@@ -66,7 +65,7 @@ import java.util.List;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
     public static final int PERMISSION_REQUEST_CODE = 100;
-    private UserCredentials userCredentials;
+//    private UserCredentials userCredentials;
     protected boolean loginSuccess = false;
     private User user;
     private ArrayList<Building> buildings;
@@ -89,8 +88,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_login );
 
-        if ( ! checkPermissions() ) {
-            requestPermission();
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (checkPermissions()) {
+                requestPermission();
+            }
         }
 
         createActivity();
@@ -98,16 +99,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean checkPermissions() {
-        if ( ContextCompat.checkSelfPermission( getApplicationContext(),
-                Manifest.permission.CAMERA ) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission( getApplicationContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission( getApplicationContext(),
-                Manifest.permission.READ_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ) {
-
-            return false;
-        }
-        return true;
+        return ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(getApplicationContext(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(getApplicationContext(),
+                        Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {
@@ -144,15 +141,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mSignInButton.setOnClickListener( new OnClickListener() {
             @Override
             public void onClick( View view ) {
-                try {
-                    userCredentials = new UserCredentials( mUsernameView.getText().toString(),
-                            mPasswordView.getText().toString() );
-                    attemptLogin();
-                } catch ( NullPointerException e ) {
-                    Snackbar.make( findViewById( R.id.username ), "Error detected. Close the" +
-                            " app and try again.", Snackbar.LENGTH_LONG )
-                            .setAction( "Action", null ).show();
-                }
+                attemptLogin();
             }
         } );
 
@@ -218,7 +207,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // form field with an error.
             focusView.requestFocus();
         } else {
-            if ( ! checkPermissions() ) {
+            if (checkPermissions()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder( LoginActivity.this );
                 builder.setTitle( "Alert" );
                 builder.setMessage("Camera and Storage permissions are required for proper app " +
@@ -241,9 +230,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 // Show a progress spinner, and kick off a background task to
                 // perform the user login attempt.
                 showProgress( true );
-                mAuthTask = new UserLoginTask( userCredentials.getUsername(),
-                        userCredentials.getPassword(), loginSuccess );
-                userCredentials = null;
+                mAuthTask = new UserLoginTask( username,
+                        password, loginSuccess );
+//                userCredentials = null;
                 mAuthTask.execute( ( Void ) null );
             }
         }

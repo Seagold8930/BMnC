@@ -19,11 +19,14 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import androidx.annotation.Nullable;
@@ -51,6 +54,7 @@ import com.example.bmc.auxiliary.User;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,6 +77,8 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     private View mUpCIFormView;
     private View mProgressView;
     private InsertTask mIn;
+
+    private String pictureImagePath = "";
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -180,50 +186,65 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     }
 
     private void takePicture() {
-        Intent photo = new Intent( MediaStore.ACTION_IMAGE_CAPTURE );
-//        String filepath = "file:///sdcard/";
         imageName = String.format( "%s%s%s", "BM&C_", new SimpleDateFormat("ddMMyyhhmmss").
                 format( new Date() ), ".jpg" );
-//        Uri uri = Uri.parse( filepath + imageName );
-//        photo.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri);
-        startActivityForResult( photo, 0 );
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        pictureImagePath = storageDir.getAbsolutePath() + "/" + imageName;
+        File file = new File( pictureImagePath );
+        Uri outputFileUri = Uri.fromFile(file);
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+        startActivityForResult(cameraIntent, 1);
     }
 
     @Override
     protected void onActivityResult( int requestCode, int resultCode, @Nullable Intent data ) {
         super.onActivityResult( requestCode, resultCode, data );
-        if ( resultCode == RESULT_OK ) {
-            try {
-//                file = new File( Environment.getExternalStorageDirectory().getPath(), imageName );
-//                Uri uri = Uri.fromFile( file );
-//                uri = data.getData();
-//                bitmap = MediaStore.Images.Media.getBitmap( this.getContentResolver(), uri );
-                bitmap = ( Bitmap ) data.getExtras().get( "data" );
 
-//                ExifInterface exif = new ExifInterface( uri.getPath() );
-//                int orientation = exif.getAttributeInt( ExifInterface.TAG_ORIENTATION, 1 );
-//                Matrix matrix = new Matrix();
-//
-//                if ( orientation == 6 ) {
-//                    matrix.postRotate( 90 );
-//                } else if ( orientation == 3 ) {
-//                    matrix.postRotate( 180 );
-//                } else if ( orientation == 8 ) {
-//                    matrix.postRotate( 270 );
-//                }
-//
-//                bitmap = Bitmap.createBitmap( bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true );
-                imageView.setImageBitmap( bitmap );
-                MediaStore.Images.Media.insertImage( getContentResolver(), bitmap, imageName,
-                        null );
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            File imgFile = new  File(pictureImagePath);
+            if(imgFile.exists()){
+                bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                imageView.setImageBitmap(bitmap);
 
-            } catch ( Exception e ) {
-                e.printStackTrace();
-                finish();
             }
-        } else {
+        } else if ( resultCode == RESULT_CANCELED ){
             finish();
         }
+
+//        if ( resultCode == RESULT_OK ) {
+//            try {
+////                file = new File( Environment.getExternalStorageDirectory().getPath(), imageName );
+////                Uri uri = Uri.fromFile( file );
+////                uri = data.getData();
+////                bitmap = MediaStore.Images.Media.getBitmap( this.getContentResolver(), uri );
+//                bitmap = ( Bitmap ) data.getExtras().get( "data" );
+//
+////                ExifInterface exif = new ExifInterface( uri.getPath() );
+////                int orientation = exif.getAttributeInt( ExifInterface.TAG_ORIENTATION, 1 );
+////                Matrix matrix = new Matrix();
+////
+////                if ( orientation == 6 ) {
+////                    matrix.postRotate( 90 );
+////                } else if ( orientation == 3 ) {
+////                    matrix.postRotate( 180 );
+////                } else if ( orientation == 8 ) {
+////                    matrix.postRotate( 270 );
+////                }
+////
+////                bitmap = Bitmap.createBitmap( bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true );
+//                imageView.setImageBitmap( bitmap );
+//                MediaStore.Images.Media.insertImage( getContentResolver(), bitmap, imageName,
+//                        null );
+//
+//            } catch ( Exception e ) {
+//                e.printStackTrace();
+//                finish();
+//            }
+//        } else {
+//            finish();
+//        }
     }
 
     private void attemptUpload() {

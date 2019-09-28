@@ -16,6 +16,16 @@ package com.example.bmc.validate;
 
 public class Validate {
 
+    /**
+     * This method validates a username inputted by the user. The username possesses the following
+     * rules: Must not be empty (Error code 4), must not contain whitespaces (Error code 3),
+     * must not be shorter than 8 characters (Error code 2), must match the pattern:
+     * alpha characters (upper case or lower case) followed by a dot, followed by alpha characters
+     * upper case or lower case) followed by digits. i.e. Name.Surname000
+     * returns error code 1 if pattern does not match, and error code 0 if it matches
+     * @param input
+     * @return
+     */
     public int validateUsername(String input) {
         if( input.isEmpty() )
             return 4;
@@ -31,6 +41,15 @@ public class Validate {
         return -1;
     }
 
+    /**
+     * This method validates a password inputted by the user. The password possesses the following
+     * rules: Must not be empty (Error code 4), must not contain whitespaces (Error code 3),
+     * must not be shorter than 8 characters (Error code 2), must match the pattern:
+     * at least one upper case letter, at least one lower case letter, at least one digit
+     * returns error code 1 if pattern does not match, and error code 0 if it matches
+     * @param input
+     * @return
+     */
     public int validatePassword(String input) {
         if ( input.isEmpty() )
             return 4;

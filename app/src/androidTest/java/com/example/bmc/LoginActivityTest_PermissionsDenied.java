@@ -1,6 +1,7 @@
 package com.example.bmc;
 
 
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -17,6 +18,7 @@ import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.rule.GrantPermissionRule;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -44,12 +46,12 @@ public class LoginActivityTest_PermissionsDenied {
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
-//    @Rule
-//    public GrantPermissionRule mGrantPermissionRule =
-//            GrantPermissionRule.grant(
-//                    "android.permission.CAMERA",
-//                    "android.permission.READ_EXTERNAL_STORAGE",
-//                    "android.permission.WRITE_EXTERNAL_STORAGE");
+    @Rule
+    public GrantPermissionRule mGrantPermissionRule =
+            GrantPermissionRule.grant(
+                    "android.permission.CAMERA",
+                    "android.permission.READ_EXTERNAL_STORAGE",
+                    "android.permission.WRITE_EXTERNAL_STORAGE");
 
     @Test
     public void loginActivityTest_PermissionsDenied() {
@@ -133,16 +135,6 @@ public class LoginActivityTest_PermissionsDenied {
                                 0)));
         appCompatEditText.perform(scrollTo(), typeText("MyPass1000"), closeSoftKeyboard());
 
-        ViewInteraction appCompatCheckBox = onView(
-                allOf(withId(R.id.remember_me), withText("Remember me"),
-                        childAtPosition(
-                                allOf(withId(R.id.credentials_login_form),
-                                        childAtPosition(
-                                                withId(R.id.login_form),
-                                                0)),
-                                2)));
-        appCompatCheckBox.perform(scrollTo(), click());
-
         ViewInteraction appCompatButton = onView(
                 allOf(withId(R.id.sign_in_button), withText("Login"),
                         childAtPosition(
@@ -196,16 +188,16 @@ public class LoginActivityTest_PermissionsDenied {
     }
 
     private static void denyPermissionsIfNeeded() {
-//        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= 23) {
             UiDevice device = UiDevice.getInstance(getInstrumentation());
             UiObject denyPermissions = device.findObject(new UiSelector().text("DENY"));
-            if (denyPermissions.exists()) {
+//            if (denyPermissions.exists()) {
                 try {
                     denyPermissions.click();
                 } catch (UiObjectNotFoundException e) {
                     e.printStackTrace();
                 }
-            }
-//        }
+//            }
+        }
     }
 }

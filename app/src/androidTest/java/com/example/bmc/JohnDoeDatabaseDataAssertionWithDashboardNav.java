@@ -21,6 +21,7 @@ import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.rule.GrantPermissionRule;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -39,7 +40,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
@@ -51,12 +51,12 @@ public class JohnDoeDatabaseDataAssertionWithDashboardNav {
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
-//    @Rule
-//    public GrantPermissionRule mGrantPermissionRule =
-//            GrantPermissionRule.grant(
-//                    "android.permission.CAMERA",
-//                    "android.permission.READ_EXTERNAL_STORAGE",
-//                    "android.permission.WRITE_EXTERNAL_STORAGE");
+    @Rule
+    public GrantPermissionRule mGrantPermissionRule =
+            GrantPermissionRule.grant(
+                    "android.permission.CAMERA",
+                    "android.permission.READ_EXTERNAL_STORAGE",
+                    "android.permission.WRITE_EXTERNAL_STORAGE");
 
     @Test
     public void johnDoeDatabaseDataAssertion() {
@@ -64,9 +64,7 @@ public class JohnDoeDatabaseDataAssertionWithDashboardNav {
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            allowPermissionsIfNeeded();
             Thread.sleep(1000);
-            allowPermissionsIfNeeded();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -970,6 +968,47 @@ public class JohnDoeDatabaseDataAssertionWithDashboardNav {
         appCompatTextView3.perform(click());
 
         Assert.assertTrue( new DB_Handler().updatePassword( "John.Doe001", new User( "John Doe", "John.Doe001" ) ) );
+
+        checkBox = onView(
+                allOf(withId(R.id.remember_me),
+                        childAtPosition(
+                                allOf(withId(R.id.credentials_login_form),
+                                        childAtPosition(
+                                                withId(R.id.login_form),
+                                                0)),
+                                2),
+                        isDisplayed()));
+        checkBox.perform(click());
+
+        appCompatEditText = onView(
+                allOf(withId(R.id.password),
+                        childAtPosition(
+                                childAtPosition(
+                                        withClassName(is("com.google.android.material.textfield.TextInputLayout")),
+                                        0),
+                                0)));
+        appCompatEditText.perform(scrollTo(), replaceText("John.Doe001"), closeSoftKeyboard());
+
+        appCompatButton = onView(
+                allOf(withId(R.id.sign_in_button), withText("Login"),
+                        childAtPosition(
+                                allOf(withId(R.id.credentials_login_form),
+                                        childAtPosition(
+                                                withId(R.id.login_form),
+                                                0)),
+                                3)));
+        appCompatButton.perform(scrollTo(), click());
+
+        ViewInteraction appCompatImageButton3 = onView(
+                allOf(withContentDescription("Navigate up"),
+                        childAtPosition(
+                                allOf(withId(R.id.toolbar),
+                                        childAtPosition(
+                                                withClassName(is("com.google.android.material.appbar.AppBarLayout")),
+                                                0)),
+                                0),
+                        isDisplayed()));
+        appCompatImageButton3.perform(click());
     }
 
     private static Matcher<View> childAtPosition(
@@ -989,19 +1028,5 @@ public class JohnDoeDatabaseDataAssertionWithDashboardNav {
                         && view.equals(((ViewGroup) parent).getChildAt(position));
             }
         };
-    }
-
-    private static void allowPermissionsIfNeeded() {
-//        if (Build.VERSION.SDK_INT >= 23) {
-        UiDevice device = UiDevice.getInstance(getInstrumentation());
-        UiObject allowPermissions = device.findObject(new UiSelector().text("ALLOW"));
-        if (allowPermissions.exists()) {
-            try {
-                allowPermissions.click();
-            } catch (UiObjectNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-//        }
     }
 }

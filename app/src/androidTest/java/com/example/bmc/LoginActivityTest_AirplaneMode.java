@@ -17,6 +17,7 @@ import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.rule.GrantPermissionRule;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -43,15 +44,20 @@ public class LoginActivityTest_AirplaneMode {
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
+    @Rule
+    public GrantPermissionRule mGrantPermissionRule =
+            GrantPermissionRule.grant(
+                    "android.permission.CAMERA",
+                    "android.permission.READ_EXTERNAL_STORAGE",
+                    "android.permission.WRITE_EXTERNAL_STORAGE");
+
     @Test
     public void loginActivityTest_AirplaneMode() {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            allowPermissionsIfNeeded();
             Thread.sleep(1000);
-            allowPermissionsIfNeeded();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -179,19 +185,5 @@ public class LoginActivityTest_AirplaneMode {
                         && view.equals(((ViewGroup) parent).getChildAt(position));
             }
         };
-    }
-
-    private static void allowPermissionsIfNeeded() {
-//        if (Build.VERSION.SDK_INT >= 23) {
-        UiDevice device = UiDevice.getInstance(getInstrumentation());
-        UiObject allowPermissions = device.findObject(new UiSelector().text("ALLOW"));
-        if (allowPermissions.exists()) {
-            try {
-                allowPermissions.click();
-            } catch (UiObjectNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-//        }
     }
 }

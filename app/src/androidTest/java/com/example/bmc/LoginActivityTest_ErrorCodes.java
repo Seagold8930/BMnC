@@ -17,6 +17,7 @@ import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.rule.GrantPermissionRule;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -25,6 +26,7 @@ import androidx.test.uiautomator.UiSelector;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -44,12 +46,12 @@ public class LoginActivityTest_ErrorCodes {
     @Rule
     public ActivityTestRule<LoginActivity> mActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
-//    @Rule
-//    public GrantPermissionRule mGrantPermissionRule =
-//            GrantPermissionRule.grant(
-//                    "android.permission.CAMERA",
-//                    "android.permission.READ_EXTERNAL_STORAGE",
-//                    "android.permission.WRITE_EXTERNAL_STORAGE");
+    @Rule
+    public GrantPermissionRule mGrantPermissionRule =
+            GrantPermissionRule.grant(
+                    "android.permission.CAMERA",
+                    "android.permission.READ_EXTERNAL_STORAGE",
+                    "android.permission.WRITE_EXTERNAL_STORAGE");
 
     @Test
     public void loginActivityTest_ErrorCodes() {
@@ -57,9 +59,7 @@ public class LoginActivityTest_ErrorCodes {
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            denyPermissionsIfNeeded();
             Thread.sleep(1000);
-            denyPermissionsIfNeeded();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -169,7 +169,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatAutoCompleteTextView2.perform(scrollTo(), typeText("test"));
+        appCompatAutoCompleteTextView2.perform(scrollTo(), replaceText("test"));
 
         ViewInteraction appCompatAutoCompleteTextView3 = onView(
                 allOf(withId(R.id.username), withText("test"),
@@ -215,7 +215,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatAutoCompleteTextView5.perform(scrollTo(), typeText("testtest"));
+        appCompatAutoCompleteTextView5.perform(scrollTo(), replaceText("testtest"));
 
         ViewInteraction appCompatAutoCompleteTextView6 = onView(
                 allOf(withId(R.id.username), withText("testtest"),
@@ -252,7 +252,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatAutoCompleteTextView9.perform(scrollTo(), typeText("test.test0"));
+        appCompatAutoCompleteTextView9.perform(scrollTo(), replaceText("test.test0"));
 
         ViewInteraction appCompatAutoCompleteTextView10 = onView(
                 allOf(withId(R.id.username), withText("test.test0"),
@@ -289,7 +289,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText.perform(scrollTo(), typeText("te st"), closeSoftKeyboard());
+        appCompatEditText.perform(scrollTo(), replaceText("te st"), closeSoftKeyboard());
 
         ViewInteraction appCompatButton7 = onView(
                 allOf(withId(R.id.sign_in_button), withText("Login"),
@@ -316,7 +316,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText2.perform(scrollTo(), typeText("test"));
+        appCompatEditText2.perform(scrollTo(), replaceText("test"));
 
         ViewInteraction appCompatEditText3 = onView(
                 allOf(withId(R.id.password), withText("test"),
@@ -353,7 +353,7 @@ public class LoginActivityTest_ErrorCodes {
                                         withClassName(is("com.google.android.material.textfield.TextInputLayout")),
                                         0),
                                 0)));
-        appCompatEditText4.perform(scrollTo(), typeText("testtest"));
+        appCompatEditText4.perform(scrollTo(), replaceText("testtest"));
 
         ViewInteraction appCompatEditText5 = onView(
                 allOf(withId(R.id.password), withText("testtest"),
@@ -401,19 +401,5 @@ public class LoginActivityTest_ErrorCodes {
                         && view.equals(((ViewGroup) parent).getChildAt(position));
             }
         };
-    }
-
-    private static void denyPermissionsIfNeeded() {
-//        if (Build.VERSION.SDK_INT >= 23) {
-        UiDevice device = UiDevice.getInstance(getInstrumentation());
-        UiObject denyPermissions = device.findObject(new UiSelector().text("DENY"));
-        if (denyPermissions.exists()) {
-            try {
-                denyPermissions.click();
-            } catch (UiObjectNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-//        }
     }
 }
