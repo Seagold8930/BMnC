@@ -41,7 +41,12 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
-        createActivity();
+        try {
+            createActivity();
+        } catch ( Exception e ) {
+            e.printStackTrace();
+            finish();
+        }
     }
 
     private void createActivity() {

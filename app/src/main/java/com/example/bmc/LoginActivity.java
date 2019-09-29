@@ -82,13 +82,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private CheckBox mCheckRemember;
     private SharedPreferences mSharedPref;
     private static final String PREFERENCES_CRED = "PrefsFile";
+    private boolean isProgressbarShowing;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_login );
 
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+        setContentView(R.layout.activity_login);
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             if (checkPermissions()) {
                 requestPermission();
             }
@@ -96,7 +98,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         createActivity();
         getPreferencesData();
+
+        if (savedInstanceState != null && savedInstanceState.containsKey( "progressBarIsShowing" ) ) {
+            showProgress( true );
+            isProgressbarShowing = true;
+        }
     }
+
+    // invoked when the activity may be temporarily destroyed, save the instance state here
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if ( isProgressbarShowing ) {
+            outState.putBoolean("progressBarIsShowing", isProgressbarShowing);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
 
     private boolean checkPermissions() {
         return ContextCompat.checkSelfPermission(getApplicationContext(),
@@ -121,8 +138,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView = findViewById( R.id.password );
 
         //TODO remove after testing
-//        mUsernameView.setText( "Jane.Smith001" );
-//        mPasswordView.setText( "MyPass1000" );
+        mUsernameView.setText( "Jane.Smith001" );
+        mPasswordView.setText( "MyPass1000" );
 //        mUsernameView.setText( "john.doe001" );
 //        mPasswordView.setText( "John.Doe001" );
 
@@ -177,8 +194,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setError( null );
 
         // Store values at the time of the login attempt.
-        String username = mUsernameView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String username = mUsernameView.getText().toString().trim();
+        mUsernameView.setText( username );
+        String password = mPasswordView.getText().toString().trim();
+        mPasswordView.setText( password );
 
         boolean cancel = false;
         View focusView = null;
@@ -230,6 +249,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 // Show a progress spinner, and kick off a background task to
                 // perform the user login attempt.
                 showProgress( true );
+                isProgressbarShowing = true;
                 mAuthTask = new UserLoginTask( username,
                         password, loginSuccess );
 //                userCredentials = null;
@@ -392,7 +412,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return true;
                 } else {
                     handler = new DB_Handler();
-                    buildings = handler.getBuildingName( user );
+                    try {
+                        buildings = handler.getBuildingName( user );
+                    } catch ( Exception e ) {
+                        e.printStackTrace();
+                        Snackbar.make( findViewById( R.id.username ), "Connection failed. Check your" +
+                                " network access.", Snackbar.LENGTH_LONG )
+                                .setAction( "Action", null ).show();
+                        return false;
+                    }
+
                     loginSuccess = true;
                     return true;
                 }
@@ -403,6 +432,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute( final Boolean success ) {
             mAuthTask = null;
             showProgress( false );
+            isProgressbarShowing = false;
 
             if ( success && loginSuccess ) {
                 if( mUsername.toLowerCase().equals( mPassword.toLowerCase() ) ) {
@@ -433,6 +463,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onCancelled() {
             mAuthTask = null;
             showProgress( false );
+            isProgressbarShowing = false;
         }
     }
 }
