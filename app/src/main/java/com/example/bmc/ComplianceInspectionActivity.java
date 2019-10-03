@@ -77,6 +77,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     private View mUpCIFormView;
     private View mProgressView;
     private InsertTask mIn;
+    private Firebase_Helper helper;
 
     private String pictureImagePath = "";
 
@@ -186,15 +187,15 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     }
 
     private void takePicture() {
-        imageName = String.format( "%s%s%s", "BM&C_", new SimpleDateFormat("ddMMyyhhmmss").
-                format( new Date() ), ".jpg" );
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        pictureImagePath = storageDir.getAbsolutePath() + "/" + imageName;
-        File file = new File( pictureImagePath );
-        Uri outputFileUri = Uri.fromFile(file);
+//        imageName = String.format( "%s%s%s", "BM&C_", new SimpleDateFormat("ddMMyyhhmmss").
+//                format( new Date() ), ".jpg" );
+//        File storageDir = Environment.getExternalStoragePublicDirectory(
+//                Environment.DIRECTORY_PICTURES);
+//        pictureImagePath = storageDir.getAbsolutePath() + "/" + imageName;
+//        File file = new File( pictureImagePath );
+//        Uri outputFileUri = Uri.fromFile(file);
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+//        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         startActivityForResult(cameraIntent, 1);
     }
 
@@ -203,12 +204,13 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         super.onActivityResult( requestCode, resultCode, data );
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            File imgFile = new  File(pictureImagePath);
-            if(imgFile.exists()){
-                bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+//            File imgFile = new  File(pictureImagePath);
+//            if(imgFile.exists()){
+            bitmap = (Bitmap) data.getExtras().get( "data" );
+//                bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                 imageView.setImageBitmap(bitmap);
 
-            }
+//            }
         } else if ( resultCode == RESULT_CANCELED ){
             finish();
         }
@@ -343,7 +345,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            Firebase_Helper helper = new Firebase_Helper();
+            helper = new Firebase_Helper();
 
             try {
                 helper.addComplianceInspection( inspection, new Firebase_Helper.DataStatus() {

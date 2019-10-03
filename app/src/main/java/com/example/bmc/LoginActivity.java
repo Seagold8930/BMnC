@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 
+import com.example.bmc.auxiliary.UserCredentials;
 import com.example.bmc.db.DB_Handler;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -65,12 +66,13 @@ import java.util.List;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
     public static final int PERMISSION_REQUEST_CODE = 100;
-//    private UserCredentials userCredentials;
+    private UserCredentials userCredentials;
     protected boolean loginSuccess = false;
     private User user;
     private ArrayList<Building> buildings;
+    private Validate validate;
     /**
-     * Keep track of the login task to ensure we can cancel it if requested.
+     * Inner class instance to handle the login task in the background.
      */
     private UserLoginTask mAuthTask = null;
 
@@ -81,6 +83,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mLoginFormView;
     private CheckBox mCheckRemember;
     private SharedPreferences mSharedPref;
+
+    //Preferences to save user credentials by checking the Remember Me checkbox
     private static final String PREFERENCES_CRED = "PrefsFile";
     private boolean isProgressbarShowing;
 
@@ -138,8 +142,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView = findViewById( R.id.password );
 
         //TODO remove after testing
-        mUsernameView.setText( "Jane.Smith001" );
-        mPasswordView.setText( "MyPass1000" );
+//        mUsernameView.setText( "Jane.Smith001" );
+//        mPasswordView.setText( "MyPass1000" );
 //        mUsernameView.setText( "john.doe001" );
 //        mPasswordView.setText( "John.Doe001" );
 
@@ -194,17 +198,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setError( null );
 
         // Store values at the time of the login attempt.
-        String username = mUsernameView.getText().toString().trim();
-        mUsernameView.setText( username );
-        String password = mPasswordView.getText().toString().trim();
-        mPasswordView.setText( password );
+        userCredentials = new UserCredentials( mUsernameView.getText().toString().trim(),
+                mPasswordView.getText().toString().trim() );
+//        String username = mUsernameView.getText().toString().trim();
+//        mUsernameView.setText( userCredentials.getUsername() );
+//        String password = mPasswordView.getText().toString().trim();
+//        mPasswordView.setText( userCredentials.getPassword() );
 
         boolean cancel = false;
         View focusView = null;
 
-        Validate validate = new Validate();
-        int userErrorCode = validate.validateUsername( username );
-        int passErrorCode = validate.validatePassword( password );
+        validate = new Validate();
+        int userErrorCode = validate.validateUsername( userCredentials.getUsername() );
+        int passErrorCode = validate.validatePassword( userCredentials.getPassword() );
 
         if ( userErrorCode == -1 || passErrorCode == -1 ) {
             focusView = mUsernameView;
@@ -250,9 +256,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 // perform the user login attempt.
                 showProgress( true );
                 isProgressbarShowing = true;
-                mAuthTask = new UserLoginTask( username,
-                        password, loginSuccess );
-//                userCredentials = null;
+                mAuthTask = new UserLoginTask( userCredentials, loginSuccess );
                 mAuthTask.execute( ( Void ) null );
             }
         }
@@ -388,14 +392,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private final String mPassword;
         private boolean loginSuccess;
 
-        UserLoginTask( String username, String password, boolean loginSuccess ) {
-            this.mUsername = username;
-            this.mPassword = password;
+        public UserLoginTask(UserCredentials userCredentials, boolean loginSuccess) {
+            this.mUsername = userCredentials.getUsername();
+            this.mPassword = userCredentials.getPassword();
             this.loginSuccess = loginSuccess;
         }
 
         @Override
         protected Boolean doInBackground( Void... params ) {
+            userCredentials = null;
             DB_Handler handler = new DB_Handler();
             loginSuccess = false;
 

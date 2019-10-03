@@ -109,7 +109,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp(){
-        finish();
+        logout();
         return true;
     }
 }

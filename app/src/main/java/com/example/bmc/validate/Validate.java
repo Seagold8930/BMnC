@@ -42,8 +42,8 @@ public class Validate {
     }
 
     /**
-     * This method validates a password inputted by the user. The password possesses the following
-     * rules: Must not be empty (Error code 4), must not contain whitespaces (Error code 3),
+     * This method validates a password string inputted by the user. The password possesses the
+     * following rules: Must not be empty (Error code 4), must not contain whitespaces (Error code 3),
      * must not be shorter than 8 characters (Error code 2), must match the pattern:
      * at least one upper case letter, at least one lower case letter, at least one digit
      * returns error code 1 if pattern does not match, and error code 0 if it matches
