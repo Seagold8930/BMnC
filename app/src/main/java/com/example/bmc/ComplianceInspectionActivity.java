@@ -71,7 +71,6 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     private String statusSelection;
     private User user;
     private Building building;
-    private String imageName;
     private ImageView imageView;
     private static Bitmap bitmap;
     private View mUpCIFormView;
@@ -79,16 +78,11 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     private InsertTask mIn;
     private Firebase_Helper helper;
 
-    private String pictureImagePath = "";
-
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
 
         createActivity();
-        myEditTexts();
-        mySpinner();
-        myObjects();
 
         if ( savedInstanceState == null ) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -126,6 +120,9 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
             }
         });
 
+        myEditTexts();
+        mySpinner();
+        myObjects();
     }
 
     private void myEditTexts() {
@@ -153,9 +150,9 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>( this, android.R.layout.
                 simple_list_item_1, spinnerList );
         spinner.setAdapter( arrayAdapter );
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinner.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected( AdapterView<?> parent, View view, int position, long id ) {
                 if ( spinner.getSelectedItem().toString().equals( spinnerList.get( 0 ) ) ) {
                     ( ( TextView ) parent.getChildAt(0 ) ).setTextColor( getResources().
                             getColor( android.R.color.holo_red_dark ) );
@@ -168,10 +165,10 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onNothingSelected( AdapterView<?> parent ) {
 
             }
-        });
+        } );
     }
 
     private void myObjects() {
@@ -187,66 +184,20 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     }
 
     private void takePicture() {
-//        imageName = String.format( "%s%s%s", "BM&C_", new SimpleDateFormat("ddMMyyhhmmss").
-//                format( new Date() ), ".jpg" );
-//        File storageDir = Environment.getExternalStoragePublicDirectory(
-//                Environment.DIRECTORY_PICTURES);
-//        pictureImagePath = storageDir.getAbsolutePath() + "/" + imageName;
-//        File file = new File( pictureImagePath );
-//        Uri outputFileUri = Uri.fromFile(file);
-        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-        startActivityForResult(cameraIntent, 1);
+        Intent cameraIntent = new Intent( android.provider.MediaStore.ACTION_IMAGE_CAPTURE );
+        startActivityForResult( cameraIntent, 1 );
     }
 
     @Override
     protected void onActivityResult( int requestCode, int resultCode, @Nullable Intent data ) {
         super.onActivityResult( requestCode, resultCode, data );
 
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-//            File imgFile = new  File(pictureImagePath);
-//            if(imgFile.exists()){
-            bitmap = (Bitmap) data.getExtras().get( "data" );
-//                bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                imageView.setImageBitmap(bitmap);
-
-//            }
+        if ( requestCode == 1 && resultCode == RESULT_OK ) {
+            bitmap = ( Bitmap ) data.getExtras().get( "data" );
+            imageView.setImageBitmap( bitmap );
         } else if ( resultCode == RESULT_CANCELED ){
             finish();
         }
-
-//        if ( resultCode == RESULT_OK ) {
-//            try {
-////                file = new File( Environment.getExternalStorageDirectory().getPath(), imageName );
-////                Uri uri = Uri.fromFile( file );
-////                uri = data.getData();
-////                bitmap = MediaStore.Images.Media.getBitmap( this.getContentResolver(), uri );
-//                bitmap = ( Bitmap ) data.getExtras().get( "data" );
-//
-////                ExifInterface exif = new ExifInterface( uri.getPath() );
-////                int orientation = exif.getAttributeInt( ExifInterface.TAG_ORIENTATION, 1 );
-////                Matrix matrix = new Matrix();
-////
-////                if ( orientation == 6 ) {
-////                    matrix.postRotate( 90 );
-////                } else if ( orientation == 3 ) {
-////                    matrix.postRotate( 180 );
-////                } else if ( orientation == 8 ) {
-////                    matrix.postRotate( 270 );
-////                }
-////
-////                bitmap = Bitmap.createBitmap( bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true );
-//                imageView.setImageBitmap( bitmap );
-//                MediaStore.Images.Media.insertImage( getContentResolver(), bitmap, imageName,
-//                        null );
-//
-//            } catch ( Exception e ) {
-//                e.printStackTrace();
-//                finish();
-//            }
-//        } else {
-//            finish();
-//        }
     }
 
     private void attemptUpload() {
@@ -286,8 +237,9 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
     }
 
     private boolean isDeviceConnected() {
-        ConnectivityManager manager = (ConnectivityManager) this.
+        ConnectivityManager manager = ( ConnectivityManager ) this.
                 getSystemService( CONNECTIVITY_SERVICE );
+
         NetworkInfo info = manager.getActiveNetworkInfo();
 
         if ( info != null && info.isConnected() ) {
@@ -336,7 +288,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         }
     }
 
-    public class InsertTask extends AsyncTask< Void, Void, Boolean > {
+    private class InsertTask extends AsyncTask< Void, Void, Boolean > {
         ComplianceInspection inspection;
 
         public InsertTask( ComplianceInspection inspection ) {
@@ -344,7 +296,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected Boolean doInBackground( Void... voids ) {
             helper = new Firebase_Helper();
 
             try {
@@ -369,6 +321,10 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Compliance Inspection upload " +
                         "successful.", Toast.LENGTH_SHORT).show();
                     finish();
+            } else {
+                Snackbar.make( findViewById( R.id.finding_input ), "Compliance Inspection " +
+                        "upload failed. Please, try again", Snackbar.LENGTH_LONG )
+                        .setAction( "Action", null ).show();
             }
         }
     }

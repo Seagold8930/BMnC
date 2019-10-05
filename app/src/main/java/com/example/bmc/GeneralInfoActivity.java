@@ -14,11 +14,18 @@
 //**************************************************************************************************
 package com.example.bmc;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -54,8 +61,8 @@ public class GeneralInfoActivity extends AppCompatActivity {
         building = ( Building ) getIntent().getSerializableExtra( "MyBuilding" );
         user = ( User ) getIntent().getSerializableExtra( "User" );
 
-        populate( building );
         listView = findViewById( R.id.lv_general_info );
+        populate( building );
         show( buildingInfo );
         myFAB();
     }
@@ -76,15 +83,48 @@ public class GeneralInfoActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick( View v ) {
-                Intent intent = new Intent( getApplicationContext(),
-                        ComplianceInspectionActivity.class );
-                intent.putExtra( "User", user );
-                intent.putExtra( "Buildings", getIntent().
-                        getSerializableExtra( "Buildings" ) );
-                intent.putExtra( "MyBuilding", building );
-                startActivity( intent );
+                if ( checkPermissions() ) {
+                    displayPermissionAlert();
+                } else {
+                    Intent intent = new Intent( getApplicationContext(),
+                            ComplianceInspectionActivity.class );
+                    intent.putExtra( "User", user );
+                    intent.putExtra( "Buildings", getIntent().
+                            getSerializableExtra( "Buildings" ) );
+                    intent.putExtra( "MyBuilding", building );
+                    startActivity( intent );
+                }
             }
         } );
+    }
+
+    private boolean checkPermissions() {
+        return ContextCompat.checkSelfPermission( getApplicationContext(),
+                Manifest.permission.CAMERA ) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission( getApplicationContext(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission( getApplicationContext(),
+                        Manifest.permission.READ_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void displayPermissionAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder( GeneralInfoActivity.this );
+        builder.setTitle( "Alert" );
+        builder.setMessage("Camera and Storage permissions are required for proper app " +
+                "functionality.");
+        builder.setCancelable( false );
+
+        builder.setPositiveButton(
+                "EXIT",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        logout();
+                    }
+                });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override
@@ -116,10 +156,9 @@ public class GeneralInfoActivity extends AppCompatActivity {
 
     private void openDashboard() {
         Intent intent = new Intent( getApplicationContext(), DashboardActivity.class );
-        Bundle bundle = getIntent().getExtras();
         ArrayList<Building> buildings = new ArrayList<>();
-        buildings = (ArrayList< Building >)bundle.getSerializable( "Buildings" );
-        user = ( User )bundle.getSerializable( "User" );
+        buildings = (ArrayList< Building >)getIntent().getExtras().getSerializable( "Buildings" );
+        user = ( User )getIntent().getExtras().getSerializable( "User" );
         intent.putExtra( "Buildings", buildings );
         intent.putExtra( "User", user );
         startActivity( intent );

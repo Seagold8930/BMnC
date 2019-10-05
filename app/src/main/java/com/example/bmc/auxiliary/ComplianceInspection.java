@@ -24,7 +24,7 @@ public class ComplianceInspection {
     private String createdBy;
     private String creationDate;
     private String modifiedBy;
-    private String getModifiedDate;
+    private String modifiedDate;
     private String status;
 
     public ComplianceInspection() {
@@ -33,7 +33,7 @@ public class ComplianceInspection {
     public ComplianceInspection(int buildingID, String inspectionDate, String finding,
                                 String description, String inspectionStatus, String image,
                                 String createdBy, String creationDate, String modifiedBy,
-                                String getModifiedDate, String status) {
+                                String modifiedDate, String status) {
         this.buildingID = buildingID;
         this.inspectionDate = inspectionDate;
         this.finding = finding;
@@ -43,7 +43,7 @@ public class ComplianceInspection {
         this.createdBy = createdBy;
         this.creationDate = creationDate;
         this.modifiedBy = modifiedBy;
-        this.getModifiedDate = getModifiedDate;
+        this.modifiedDate = modifiedDate;
         this.status = status;
     }
 
@@ -119,12 +119,12 @@ public class ComplianceInspection {
         this.modifiedBy = modifiedBy;
     }
 
-    public String getGetModifiedDate() {
-        return getModifiedDate;
+    public String getModifiedDate() {
+        return modifiedDate;
     }
 
-    public void setGetModifiedDate(String getModifiedDate) {
-        this.getModifiedDate = getModifiedDate;
+    public void setModifiedDate(String getModifiedDate) {
+        this.modifiedDate = getModifiedDate;
     }
 
     public String getStatus() {

@@ -37,39 +37,20 @@ public class Building implements Serializable {
         return buildingID;
     }
 
-    public void setBuildingID( int buildingID ) {
-        this.buildingID = buildingID;
-    }
-
     public String getBuildingName() {
         return buildingName;
-    }
-
-    public void setBuildingName( String buildingName ) {
-        this.buildingName = buildingName;
     }
 
     public String getBuildingAddress() {
         return buildingAddress;
     }
 
-    public void setBuildingAddress( String buildingAddress ) {
-        this.buildingAddress = buildingAddress;
-    }
-
     public String getBuildingLocation() {
         return buildingLocation;
-    }
-
-    public void setBuildingLocation( String buildingLocation ) {
-        this.buildingLocation = buildingLocation;
     }
 
     public int getBuildingYearBuilt() {
         return buildingYearBuilt;
     }
 
-    public void setBuildingYearBuilt( int buildingYearBuilt ) {
-        this.buildingYearBuilt = buildingYearBuilt;
-    }
 }

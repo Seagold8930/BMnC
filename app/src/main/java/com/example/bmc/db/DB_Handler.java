@@ -32,7 +32,7 @@ public class DB_Handler implements Serializable {
     private Connection conn = null;
     private PreparedStatement statement;
     private ResultSet set;
-    private ArrayList<Building> buildings = new ArrayList<>();
+    private ArrayList< Building > buildings = new ArrayList<>();
 
     public DB_Handler() {
 

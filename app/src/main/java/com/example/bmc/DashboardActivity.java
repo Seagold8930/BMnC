@@ -33,8 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DashboardActivity extends AppCompatActivity {
-    private ArrayList<Building> buildings = new ArrayList<>();
-    private List<String> buildingNames = new ArrayList<>();
+    private ArrayList< Building > buildings = new ArrayList<>();
+    private List< String > buildingNames = new ArrayList<>();
     private User user;
     private ListView listView;
 
@@ -55,10 +55,8 @@ public class DashboardActivity extends AppCompatActivity {
         toolbar.setNavigationIcon( R.drawable.ic_arrow_back_white_24dp );
         setSupportActionBar( toolbar );
 
-        Bundle bundle = getIntent().getExtras();
-
-        buildings = ( ArrayList< Building > )bundle.getSerializable( "Buildings" );
-        user = ( User )bundle.getSerializable( "User" );
+        buildings = ( ArrayList< Building > )getIntent().getExtras().getSerializable( "Buildings" );
+        user = ( User )getIntent().getExtras().getSerializable( "User" );
 
         listView = findViewById( R.id.lv_building_names );
         populate();

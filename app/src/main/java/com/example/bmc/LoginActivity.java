@@ -69,8 +69,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private UserCredentials userCredentials;
     protected boolean loginSuccess = false;
     private User user;
-    private ArrayList<Building> buildings;
+    private ArrayList< Building > buildings;
     private Validate validate;
+    private boolean isProgressbarShowing;
     /**
      * Inner class instance to handle the login task in the background.
      */
@@ -80,22 +81,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private AutoCompleteTextView mUsernameView;
     private EditText mPasswordView;
     private View mProgressView;
-    private View mLoginFormView;
     private CheckBox mCheckRemember;
-    private SharedPreferences mSharedPref;
+    private Button mSignInButton;
+    private View mLoginFormView;
 
     //Preferences to save user credentials by checking the Remember Me checkbox
+    private SharedPreferences mSharedPref;
     private static final String PREFERENCES_CRED = "PrefsFile";
-    private boolean isProgressbarShowing;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
 
-        setContentView(R.layout.activity_login);
+        setContentView( R.layout.activity_login );
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            if (checkPermissions()) {
+        if ( Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1 ) {
+            if ( checkPermissions() ) {
                 requestPermission();
             }
         }
@@ -103,29 +104,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         createActivity();
         getPreferencesData();
 
-        if (savedInstanceState != null && savedInstanceState.containsKey( "progressBarIsShowing" ) ) {
+        if ( savedInstanceState != null && savedInstanceState.containsKey( "progressBarIsShowing" ) ) {
             showProgress( true );
             isProgressbarShowing = true;
         }
     }
 
-    // invoked when the activity may be temporarily destroyed, save the instance state here
+    // invoked when the activity may be temporarily destroyed, saving the instance state here
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState( Bundle outState ) {
         if ( isProgressbarShowing ) {
-            outState.putBoolean("progressBarIsShowing", isProgressbarShowing);
+            outState.putBoolean( "progressBarIsShowing", isProgressbarShowing );
         }
-        super.onSaveInstanceState(outState);
+        super.onSaveInstanceState( outState );
     }
 
 
     private boolean checkPermissions() {
-        return ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(getApplicationContext(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(getApplicationContext(),
-                        Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission( getApplicationContext(),
+                Manifest.permission.CAMERA ) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission( getApplicationContext(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission( getApplicationContext(),
+                        Manifest.permission.READ_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {
@@ -140,6 +141,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mSharedPref = getSharedPreferences( PREFERENCES_CRED, MODE_PRIVATE );
         mUsernameView = findViewById( R.id.username );
         mPasswordView = findViewById( R.id.password );
+        mLoginFormView = findViewById( R.id.login_form );
+        mProgressView = findViewById( R.id.login_progress );
+        mCheckRemember = findViewById( R.id.remember_me );
 
         //TODO remove after testing
 //        mUsernameView.setText( "Jane.Smith001" );
@@ -158,17 +162,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         } );
 
-        Button mSignInButton = findViewById( R.id.sign_in_button );
+        mSignInButton = findViewById( R.id.sign_in_button );
         mSignInButton.setOnClickListener( new OnClickListener() {
             @Override
             public void onClick( View view ) {
                 attemptLogin();
             }
         } );
-
-        mLoginFormView = findViewById( R.id.login_form );
-        mProgressView = findViewById( R.id.login_progress );
-        mCheckRemember = findViewById( R.id.remember_me );
     }
 
     private void getPreferencesData() {
@@ -200,10 +200,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Store values at the time of the login attempt.
         userCredentials = new UserCredentials( mUsernameView.getText().toString().trim(),
                 mPasswordView.getText().toString().trim() );
-//        String username = mUsernameView.getText().toString().trim();
-//        mUsernameView.setText( userCredentials.getUsername() );
-//        String password = mPasswordView.getText().toString().trim();
-//        mPasswordView.setText( userCredentials.getPassword() );
 
         boolean cancel = false;
         View focusView = null;
@@ -233,24 +229,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView.requestFocus();
         } else {
             if (checkPermissions()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder( LoginActivity.this );
-                builder.setTitle( "Alert" );
-                builder.setMessage("Camera and Storage permissions are required for proper app " +
-                        "functionality.");
-                builder.setCancelable(false);
-
-                builder.setPositiveButton(
-                        "EXIT",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                                finish();
-                            }
-                        });
-
-                AlertDialog alert = builder.create();
-                alert.show();
-//            finish();
+                displayPermissionAlert();
             } else {
                 // Show a progress spinner, and kick off a background task to
                 // perform the user login attempt.
@@ -260,6 +239,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mAuthTask.execute( ( Void ) null );
             }
         }
+    }
+
+    private void displayPermissionAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder( LoginActivity.this );
+        builder.setTitle( "Alert" );
+        builder.setMessage("Camera and Storage permissions are required for proper app " +
+                "functionality.");
+        builder.setCancelable( false );
+
+        builder.setPositiveButton(
+                "EXIT",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        finish();
+                    }
+                });
+
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void checkRememberMe() {
@@ -387,7 +386,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask< Void, Void, Boolean > {
+    private class UserLoginTask extends AsyncTask< Void, Void, Boolean > {
         private final String mUsername;
         private final String mPassword;
         private boolean loginSuccess;
@@ -412,7 +411,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } else {
                 user = handler.login( mUsername, mPassword );
 
-                if (user == null) {
+                if ( user == null ) {
                     loginSuccess = false;
                     return true;
                 } else {
@@ -453,7 +452,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     intent.putExtra( "Buildings", buildings );
                     startActivity( intent );
                 }
-            } else if ( success && ! loginSuccess ) {
+            } else if ( success && !loginSuccess ) {
                 Snackbar.make( findViewById( R.id.username ), "Login failed. Check your " +
                         "credentials.", Snackbar.LENGTH_LONG )
                         .setAction( "Action", null ).show();

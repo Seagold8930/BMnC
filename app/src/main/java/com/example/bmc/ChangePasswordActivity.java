@@ -43,13 +43,14 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private EditText mNewPass;
     private EditText mConfirmPass;
-    private Button changePass;
+    private Button btnChangePass;
     private View focusView;
     private boolean cancel;
     private UpdateTask mUp = null;
     private User user;
     private ArrayList<Building> buildings = new ArrayList<>();
     private View mProgressView;
+    private boolean isProgressbarShowing = false;
     private View mChangePassFormView;
     private static final String PREFERENCES_CRED = "PrefsFile";
 
@@ -57,6 +58,19 @@ public class ChangePasswordActivity extends AppCompatActivity {
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
         createActivity();
+
+        if ( savedInstanceState != null && savedInstanceState.containsKey( "progressBarIsShowing" ) ) {
+            showProgress( true );
+            isProgressbarShowing = true;
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState( Bundle outState ) {
+        if ( isProgressbarShowing ) {
+            outState.putBoolean( "progressBarIsShowing", isProgressbarShowing );
+        }
+        super.onSaveInstanceState( outState );
     }
 
     private void createActivity() {
@@ -68,7 +82,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         mNewPass = findViewById( R.id.password_one );
         mConfirmPass = findViewById( R.id.password_two );
-        changePass = findViewById( R.id.change_password_button );
+        btnChangePass = findViewById( R.id.change_password_button );
 
         try {
             user = ( User ) getIntent().getExtras().getSerializable( "User" );
@@ -79,7 +93,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             buildings = null;
         }
 
-        changePass.setOnClickListener(new View.OnClickListener() {
+        btnChangePass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 validateFields( mNewPass.getText().toString(), mConfirmPass.getText().toString() );
@@ -90,7 +104,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         mProgressView = findViewById( R.id.change_pass_progress );
     }
 
-    private void validateFields(String newPass, String confirmPass) {
+    private void validateFields( String newPass, String confirmPass ) {
         if ( mUp != null ) {
             return;
         }
@@ -112,11 +126,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT ).show();
                 cancel = true;
             } else if ( newPassErrorCode != 0 ) {
-                mNewPass.setError( getErrorCode( newPassErrorCode ) );
+                mNewPass.setError( getErrorMessage( newPassErrorCode ) );
                 focusView = mNewPass;
                 cancel = true;
             } else if ( confirmPassErrorCode != 0 ) {
-                mConfirmPass.setError( getErrorCode( confirmPassErrorCode ) );
+                mConfirmPass.setError( getErrorMessage( confirmPassErrorCode ) );
                 focusView = mConfirmPass;
                 cancel = true;
             }
@@ -124,6 +138,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             if ( cancel ) {
                 focusView.requestFocus();
             } else {
+                isProgressbarShowing = true;
                 showProgress( true );
                 mUp = new UpdateTask( user, mNewPass.getText().toString() );
                 mUp.execute( ( Void ) null );
@@ -136,8 +151,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
         }
     }
 
-    private CharSequence getErrorCode( int errorCode ) {
-        switch (errorCode) {
+    private CharSequence getErrorMessage(int errorCode ) {
+        switch ( errorCode ) {
             case 4 :
                 return getString( R.string.error_field_required );
             case 3 :
@@ -187,17 +202,17 @@ public class ChangePasswordActivity extends AppCompatActivity {
         }
     }
 
-    public class UpdateTask extends AsyncTask< Void, Void, Boolean > {
+    private class UpdateTask extends AsyncTask< Void, Void, Boolean > {
         User user;
         String newPass;
 
-        public UpdateTask(User user, String newPass) {
+        public UpdateTask( User user, String newPass ) {
             this.user = user;
             this.newPass = newPass;
         }
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected Boolean doInBackground( Void... voids ) {
             DB_Handler handler = new DB_Handler();
 
             if( handler.getConnection() == null ) {
@@ -214,6 +229,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         protected void onPostExecute( final Boolean success ) {
             mUp = null;
             showProgress( false );
+            isProgressbarShowing = false;
 
             if ( success ) {
                 SharedPreferences preferences = getSharedPreferences( PREFERENCES_CRED, MODE_PRIVATE );
