@@ -96,7 +96,7 @@ public class DB_Handler implements Serializable {
             statement = conn.prepareStatement( "UPDATE [User] SET [password] = ?, " +
                     "[modifiedBy] = ?, [modifiedDate] = ? WHERE lower( [userID] ) = ?" );
             statement.setString( 1, newPassword );
-            statement.setString( 2, user.getName() );
+            statement.setString( 2, user.getUsername() );
             statement.setTimestamp( 3, new Timestamp( Calendar.getInstance().getTimeInMillis() ) );
             statement.setString( 4, user.getUsername().toLowerCase() );
 

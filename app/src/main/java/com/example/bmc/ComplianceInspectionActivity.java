@@ -223,7 +223,7 @@ public class ComplianceInspectionActivity extends AppCompatActivity {
             ComplianceInspection inspection = new ComplianceInspection(building.getBuildingID(),
                     date.getText().toString(), finding.getText().toString(),
                     description.getText().toString(), statusSelection, encodeImage(),
-                    user.getName(), new Date().toString(), user.getName(),
+                    user.getUsername(), new Date().toString(), user.getUsername(),
                     new Date().toString(), "Open");
 
             mIn = new InsertTask( inspection );
